@@ -14,7 +14,7 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader"]
+        use: ["style-loader", { loader: "css-loader", options: { modules: true } }, "css-modules-typescript-loader"]
       },
       {
         test: /\.[jt]sx?$/,
@@ -24,10 +24,12 @@ module.exports = {
         }],
         include: path.resolve(__dirname, './src/**/*.js'),
         exclude: /node_modules/
-      },
+      }
     ]
   },
-  resolve: { extensions: [".ts", ".tsx", ".js", ".json"] },
+  resolve: {
+    extensions: [".ts", ".tsx", ".js", ".json"]
+    },
   output: {
     path: path.resolve(__dirname, "dist/"),
     publicPath: "/dist/",
