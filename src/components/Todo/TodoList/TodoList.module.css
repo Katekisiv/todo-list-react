@@ -1,0 +1,47 @@
+.section {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.todos {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.todosInfo {
+    padding: 20px;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+}
+
+.todo {
+    padding: 5px 20px;
+    display: flex;
+    flex: 100%;
+    border-bottom: 1px solid rgba(210, 210, 210, 0.6);
+    align-items: center;
+    overflow-x: auto;
+}
+
+.todosInfoStatus {
+    display: flex;
+    gap: 15px;
+}
+
+.todosInfoOption, .todosInfoDelete {
+    color: var(--inactive);
+}
+
+.todosInfoOption.todosInfoStatusActive,
+.todosInfoOption.todosInfoStatusActive:hover {
+    color: var(--active);
+}
+
+.todosInfoStatus span:hover, .todosInfoDelete:hover {
+    color: black;
+    cursor: pointer;
+}
