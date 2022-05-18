@@ -1,8 +1,7 @@
-import React from 'react';
-import '../../declarations.d'
+import React from 'react'
 import styles from './LoginPage.module.css'
-import Header from "../../components/Header/Header";
-import Auth from "../../components/Auth/Auth";
+import Header from "../../components/Header/Header"
+import Auth from "../../components/Auth/Auth"
 
 const LoginPage = () => {
     return (

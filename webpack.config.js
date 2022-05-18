@@ -14,7 +14,7 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: ["style-loader", { loader: "css-loader", options: { modules: true } }, "css-modules-typescript-loader"]
+        use: ["style-loader", { loader: "css-loader", options: { modules: true } }]
       },
       {
         test: /\.[jt]sx?$/,

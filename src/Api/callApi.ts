@@ -1,22 +1,37 @@
 import {BASE_URL} from "../constants/api";
 
-export const callApi =
-  async (method: string, path: string, payload: {any: any}, additional: {options: {string: any}}) => {
-  const options = {
-    method: `${method}`,
+interface params {
+  method: string,
+  path: string,
+  payload?: Record<any, any>,
+  options?: Record<string, unknown>
+}
+
+interface options {
+  method: string,
+  headers: Record<string, string>,
+  options?: Record<string, unknown>,
+  body?: string
+}
+
+export const callApi = async (params : params) => {
+  const options: options = {
+    method: `${params.method}`,
     headers: {
-      Accept: 'application/json',
+      "Accept": 'application/json',
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${localStorage.getItem('token')}`
     },
-    ...additional?.options
+    ...params?.options,
+
   }
-  if(payload) {
-    //options.body = JSON.stringify(payload)
+
+  if(params?.payload) {
+    options.body = JSON.stringify(params.payload)
   }
 
   const response = await fetch(
-    `${BASE_URL}${path}`,
+    `${BASE_URL}${params.path}`,
     options
   );
   if(!response.ok) {
