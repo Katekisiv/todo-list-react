@@ -1,5 +1,4 @@
-import React from 'react';
-import '../../declarations.d.ts'
+import React from 'react'
 import styles from './Header.module.css'
 
 const Header = (props: { titleNavBar: string }) => {

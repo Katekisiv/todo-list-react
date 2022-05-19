@@ -1,18 +1,16 @@
 import React from 'react';
 import Header from "../../components/Header/Header";
-import styles from "../TodoPage/TodoPage.module.css";
-import NewTodo from "../../components/Todo/NewTodo/NewTodo";
+import styles from "./TodoPage.module.css";
 import classNames from "classnames";
-import TodoList from "../../components/Todo/TodoList/TodoList";
+import Todo from "../../components/Todo/Todo";
 
 const TodoPage = () => {
   return (
     <>
-      <Header titleNavBar='Registration'/>
+      <Header titleNavBar='Exit'/>
       <main className={styles.main}>
         <div className={classNames(styles.mainContainer, styles.container)}>
-          <NewTodo/>
-          <TodoList/>
+          <Todo/>
         </div>
       </main>
     </>

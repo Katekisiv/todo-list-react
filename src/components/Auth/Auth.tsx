@@ -1,7 +1,6 @@
-import React from 'react';
-import '../../declarations.d'
+import React from 'react'
 import styles from './Auth.module.css'
-import classNames from "classnames";
+import classNames from "classnames"
 
 const Auth: React.FC<{ page: "login" | "registration" }> = ({page}) => {
     return (
@@ -13,11 +12,11 @@ const Auth: React.FC<{ page: "login" | "registration" }> = ({page}) => {
                 {page === 'registration' ?
                     <input type='password' className={styles.userDataInput} placeholder='Confirm password'/>
                     :
-                    <></>
+                    null
                 }
             </section>
             <button className={styles.loginButton}>
-                {page.charAt(0).toUpperCase() + page.slice(1)}
+                {page}
             </button>
         </div>
     );
