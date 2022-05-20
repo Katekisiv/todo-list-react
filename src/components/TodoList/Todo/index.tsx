@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import classNames from 'classnames'
 import { CloseIcon } from '../../Icons'
-import styles from './TodoItem.module.css'
+import styles from './Todo.module.css'
 
 interface Todo {
   id: number
@@ -12,11 +12,9 @@ interface Todo {
 
 type ChangeEvent = React.ChangeEvent<HTMLInputElement>
 
-type ClickEvent = React.MouseEvent<HTMLInputElement>
-
 type KeyEvent = React.KeyboardEvent<HTMLInputElement>
 
-const TodoItem: React.FC<{
+const Todo: React.FC<{
   todo: Todo
   completeTodo: (id: number, completed: boolean) => Promise<void>
   updateTodo: (id: number, value: string) => Promise<void>
@@ -43,10 +41,8 @@ const TodoItem: React.FC<{
     await updateTodo(todo.id, todoValue)
   }, [todo.id, todoValue, updateTodo])
 
-  const makeEditable = useCallback((event: ClickEvent): void => {
-    if (event.detail === 2) {
-      return setReadOnly(false)
-    }
+  const makeEditable = useCallback((): void => {
+    setReadOnly(false)
   }, [])
 
   const onBlur = useCallback(async (): Promise<void> => {
@@ -70,28 +66,23 @@ const TodoItem: React.FC<{
   return (
     <li className={styles.todo}>
       <div
-        className={
-          todo.completed
-            ? classNames(styles.todoComplete, styles.todoCompleteChecked)
-            : styles.todoComplete
-        }
+        className={classNames(
+          styles.todoComplete,
+          todo.completed ? styles.todoCompleteChecked : null
+        )}
         onClick={completeTodoValue}
       />
       <input
         type="text"
-        className={
-          todo.completed
-            ? classNames(
-                styles.todoInput,
-                styles.inputField,
-                styles.todoValueCompleted
-              )
-            : classNames(styles.todoInput, styles.inputField)
-        }
+        className={classNames(
+          styles.todoInput,
+          styles.inputField,
+          todo.completed ? styles.todoValueCompleted : null
+        )}
         readOnly={readOnly}
         value={todoValue}
         onChange={updateTodoValue}
-        onClick={makeEditable}
+        onDoubleClick={makeEditable}
         onKeyDown={checkEnterEvent}
         onBlur={onBlur}
       />
@@ -106,4 +97,4 @@ const TodoItem: React.FC<{
   )
 }
 
-export default TodoItem
+export default Todo

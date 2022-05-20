@@ -1,7 +1,7 @@
 import React from 'react'
 import styles from './RegisterPage.module.css'
-import { Header } from '../../components/Header'
-import { Auth } from '../../components/Auth'
+import Header from '../../components/Header'
+import Auth from '../../components/Auth'
 
 const RegisterPage: React.FC = (): JSX.Element => {
   return (

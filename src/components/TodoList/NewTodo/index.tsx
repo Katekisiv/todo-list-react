@@ -17,28 +17,28 @@ type ChangeEvent = React.ChangeEvent<HTMLInputElement>
 type KeyEvent = React.KeyboardEvent<HTMLInputElement>
 
 const NewTodo: React.FC<Props> = ({ addTodoProps }): JSX.Element => {
-  const [newTodoValue, setNewTodoValue] = useState<string>('')
-  const [newTodoCompleted, setNewTodoCompleted] = useState<boolean>(false)
+  const [value, setValue] = useState<string>('')
+  const [completed, setCompleted] = useState<boolean>(false)
 
   const addTodo = useCallback(async (): Promise<void> => {
-    if (!newTodoValue) {
+    if (!value) {
       return
     }
     const newTodo = {
-      value: newTodoValue,
-      completed: newTodoCompleted,
+      value,
+      completed,
     }
     await addTodoProps(newTodo)
-    setNewTodoValue('')
-    setNewTodoCompleted(false)
-  }, [addTodoProps, newTodoCompleted, newTodoValue])
+    setValue('')
+    setCompleted(false)
+  }, [addTodoProps, completed, value])
 
-  const setTodoValue = (event: ChangeEvent): void => {
-    setNewTodoValue(event.target.value)
-  }
+  const setTodoValue = useCallback((event: ChangeEvent): void => {
+    setValue(event.target.value)
+  }, [])
 
   const setTodoComplete = (event: ChangeEvent): void => {
-    setNewTodoCompleted(event.target.checked)
+    setCompleted(event.target.checked)
   }
 
   const checkEnter = async (event: KeyEvent): Promise<void> => {
@@ -49,11 +49,10 @@ const NewTodo: React.FC<Props> = ({ addTodoProps }): JSX.Element => {
   return (
     <section className={classNames(styles.section, styles.newTodo)}>
       <label
-        className={
-          newTodoCompleted
-            ? classNames(styles.todoComplete, styles.todoCompleteChecked)
-            : styles.todoComplete
-        }
+        className={classNames(
+          styles.todoComplete,
+          completed ? styles.todoCompleteChecked : null
+        )}
       >
         <input
           type="checkbox"
@@ -64,7 +63,7 @@ const NewTodo: React.FC<Props> = ({ addTodoProps }): JSX.Element => {
       <input
         type="text"
         className={classNames(styles.inputField, styles.newTodoInput)}
-        value={newTodoValue}
+        value={value}
         onChange={setTodoValue}
         onKeyDown={checkEnter}
       />

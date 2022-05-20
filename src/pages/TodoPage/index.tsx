@@ -1,8 +1,8 @@
 import React from 'react'
 import classNames from 'classnames'
-import { Header } from '../../components/Header'
+import Header from '../../components/Header'
 import styles from './TodoPage.module.css'
-import { Todo } from '../../components/Todo'
+import TodoList from '../../components/TodoList'
 
 const TodoPage: React.FC = (): JSX.Element => {
   return (
@@ -10,7 +10,7 @@ const TodoPage: React.FC = (): JSX.Element => {
       <Header titleNavBar="Exit" />
       <main className={styles.main}>
         <div className={classNames(styles.mainContainer, styles.container)}>
-          <Todo />
+          <TodoList />
         </div>
       </main>
     </>
