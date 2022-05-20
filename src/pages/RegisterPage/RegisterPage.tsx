@@ -1,17 +1,17 @@
-import React from 'react';
-import styles from './LoginPage.module.css'
-import Header from "../../components/Header/Header";
-import Auth from "../../components/Auth/Auth";
+import React from 'react'
+import styles from './RegisterPage.module.css'
+import { Header } from '../../components/Header'
+import { Auth } from '../../components/Auth'
 
-const RegisterPage = () => {
-    return (
-        <>
-            <Header titleNavBar='Login'/>
-            <main className={styles.main}>
-                <Auth page='registration'/>
-            </main>
-        </>
-    );
-};
+const RegisterPage: React.FC = (): JSX.Element => {
+  return (
+    <>
+      <Header titleNavBar="Login" />
+      <main className={styles.main}>
+        <Auth page="registration" />
+      </main>
+    </>
+  )
+}
 
-export default RegisterPage;
+export default RegisterPage
