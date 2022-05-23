@@ -1,12 +1,50 @@
-import { hot } from 'react-hot-loader'
 import './normalize.css'
 import './App.css'
-// import LoginPage from "./pages/LoginPage/LoginPage";
 import React from 'react'
-import { TodoPage } from './pages/TodoPage'
+import { Route, Routes } from 'react-router-dom'
+import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage'
+import TodoPage from './pages/TodoPage'
+import PrivateRoutes from './components/Routes/PrivateRoutes'
+import PublicRoutes from './components/Routes/PublicRoutes'
 
 const App: React.FC = () => {
-  return <TodoPage />
+  return (
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <PrivateRoutes>
+            <TodoPage />
+          </PrivateRoutes>
+        }
+      />
+      <Route
+        path="/login"
+        element={
+          <PublicRoutes>
+            <LoginPage />
+          </PublicRoutes>
+        }
+      />
+      <Route
+        path="/registration"
+        element={
+          <PublicRoutes>
+            <RegisterPage />
+          </PublicRoutes>
+        }
+      />
+      <Route
+        path="*"
+        element={
+          <PublicRoutes>
+            <LoginPage />
+          </PublicRoutes>
+        }
+      />
+    </Routes>
+  )
 }
 
-export default hot(module)(App)
+export default App

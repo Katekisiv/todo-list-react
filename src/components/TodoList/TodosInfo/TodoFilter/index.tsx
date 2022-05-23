@@ -18,11 +18,10 @@ const TodoFilter: React.FC<Props> = ({
   }, [filter, setFilterProps])
   return (
     <span
-      className={
-        isSelected
-          ? classNames(styles.todosInfoOption, styles.todosInfoStatusActive)
-          : styles.todosInfoOption
-      }
+      className={classNames(
+        styles.todosInfoOption,
+        isSelected ? styles.todosInfoStatusActive : null
+      )}
       onClick={setFilter}
     >
       {filter}

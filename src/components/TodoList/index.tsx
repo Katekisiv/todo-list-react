@@ -1,19 +1,19 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import styles from './Todo.module.css'
+import styles from './TodoList.module.css'
 import { callApi } from '../../Api/callApi'
-import { TodoItem } from './TodoItem'
-import { TodosInfo } from './TodosInfo'
-import { NewTodo } from './NewTodo'
+import Todo from './Todo'
+import TodosInfo from './TodosInfo'
+import NewTodo from './NewTodo'
 
-interface Todo {
+interface TodoItem {
   id: number
   userId: number
   value: string
   completed: boolean
 }
 
-const Todo: React.FC = (): JSX.Element => {
-  const [todos, setTodos] = useState<Todo[]>([])
+const TodoList: React.FC = (): JSX.Element => {
+  const [todos, setTodos] = useState<TodoItem[]>([])
   const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all')
 
   useEffect(() => {
@@ -31,7 +31,7 @@ const Todo: React.FC = (): JSX.Element => {
     getTodos()
   }, [])
 
-  const filteredTodos: Todo[] = useMemo((): Todo[] => {
+  const filteredTodos: TodoItem[] = useMemo((): TodoItem[] => {
     switch (filter) {
       case 'all':
         return todos
@@ -45,7 +45,7 @@ const Todo: React.FC = (): JSX.Element => {
   }, [filter, todos])
 
   const addTodo = useCallback(async (newTodo): Promise<void> => {
-    const createdTodo: Todo = await callApi({
+    const createdTodo: TodoItem = await callApi({
       method: 'POST',
       path: 'todo',
       payload: newTodo,
@@ -114,7 +114,7 @@ const Todo: React.FC = (): JSX.Element => {
       <section className={styles.section}>
         <ul className={styles.todos}>
           {filteredTodos.map((todo) => (
-            <TodoItem
+            <Todo
               key={todo.id}
               todo={todo}
               completeTodo={completeTodo}
@@ -135,4 +135,4 @@ const Todo: React.FC = (): JSX.Element => {
   )
 }
 
-export default Todo
+export default TodoList
