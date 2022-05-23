@@ -6,7 +6,7 @@ import Auth from '../../components/Auth'
 const LoginPage: React.FC = (): JSX.Element => {
   return (
     <>
-      <Header titleNavBar="Registration" />
+      <Header titleNavBar="registration" />
       <main className={styles.main}>
         <Auth page="login" />
       </main>
