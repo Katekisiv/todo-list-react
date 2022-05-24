@@ -12,6 +12,11 @@ interface TodoItem {
   completed: boolean
 }
 
+interface NewTodo {
+  value: string
+  completed: boolean
+}
+
 const TodoList: React.FC = (): JSX.Element => {
   const [todos, setTodos] = useState<TodoItem[]>([])
   const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all')
@@ -44,7 +49,7 @@ const TodoList: React.FC = (): JSX.Element => {
     }
   }, [filter, todos])
 
-  const addTodo = useCallback(async (newTodo): Promise<void> => {
+  const addTodo = useCallback(async (newTodo: NewTodo): Promise<void> => {
     const createdTodo: TodoItem = await callApi({
       method: 'POST',
       path: 'todo',

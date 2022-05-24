@@ -9,7 +9,7 @@ interface Todo {
 }
 
 interface Props {
-  addTodoProps: (newTodo: Todo) => void
+  addTodoProps: (newTodo: Todo) => Promise<void>
 }
 
 type ChangeEvent = React.ChangeEvent<HTMLInputElement>

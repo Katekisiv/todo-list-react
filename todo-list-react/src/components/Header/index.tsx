@@ -7,15 +7,18 @@ const Header: React.FC<{
   titleNavBar: string
 }> = ({ titleNavBar }): JSX.Element => {
   const navigate = useNavigate()
+
   const logout = useCallback(async () => {
     await callApi({
       method: 'POST',
       path: 'auth/logout',
     })
+
     localStorage.removeItem('token')
     localStorage.removeItem('refreshToken')
     navigate('/login', { replace: true })
   }, [navigate])
+
   const navigateToPage = useCallback(() => {
     if (titleNavBar === 'exit') {
       logout()
@@ -23,6 +26,7 @@ const Header: React.FC<{
       navigate(`/${titleNavBar}`)
     }
   }, [logout, navigate, titleNavBar])
+
   return (
     <header className={styles.header}>
       <nav className={styles.navigation}>

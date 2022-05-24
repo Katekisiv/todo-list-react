@@ -143,17 +143,13 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
     saveAuthData(registerResult.token, registerResult.refreshToken)
   }, [checkInputData, email, password, saveAuthData])
 
-  const auth = useCallback(
-    async (event): Promise<void> => {
-      event.preventDefault()
-      if (page === 'login') {
-        await loginUser()
-      } else {
-        await registerUser()
-      }
-    },
-    [loginUser, page, registerUser]
-  )
+  const auth = useCallback(async (): Promise<void> => {
+    if (page === 'login') {
+      await loginUser()
+    } else {
+      await registerUser()
+    }
+  }, [loginUser, page, registerUser])
 
   return (
     <div className={classNames(styles.mainContainer, styles.loginPage)}>
