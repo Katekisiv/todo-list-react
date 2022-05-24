@@ -5,7 +5,7 @@ interface Props {
   children?: React.ReactNode
 }
 
-const PublicRoute = ({ children }: Props): JSX.Element => {
+function PublicRoute({ children }: Props): JSX.Element {
   const isAuth = localStorage.getItem('token')
 
   return isAuth ? <Navigate to="/" /> : <>{children}</>

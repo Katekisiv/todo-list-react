@@ -5,7 +5,8 @@ import { callApi } from '../../Api/callApi'
 
 const Header: React.FC<{
   titleNavBar: string
-}> = ({ titleNavBar }): JSX.Element => {
+  removeRefreshToken?: () => void
+}> = ({ titleNavBar, removeRefreshToken }): JSX.Element => {
   const navigate = useNavigate()
 
   const logout = useCallback(async () => {
@@ -21,11 +22,14 @@ const Header: React.FC<{
 
   const navigateToPage = useCallback(() => {
     if (titleNavBar === 'exit') {
+      if (removeRefreshToken) {
+        removeRefreshToken()
+      }
       logout()
     } else {
       navigate(`/${titleNavBar}`)
     }
-  }, [logout, navigate, titleNavBar])
+  }, [logout, navigate, removeRefreshToken, titleNavBar])
 
   return (
     <header className={styles.header}>

@@ -16,6 +16,7 @@ const TodoFilter: React.FC<Props> = ({
   const setFilter = useCallback(() => {
     setFilterProps(filter)
   }, [filter, setFilterProps])
+
   return (
     <span
       className={classNames(

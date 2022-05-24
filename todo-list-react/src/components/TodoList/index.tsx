@@ -12,7 +12,7 @@ interface TodoItem {
   completed: boolean
 }
 
-interface NewTodo {
+interface NewTodoItem {
   value: string
   completed: boolean
 }
@@ -21,20 +21,21 @@ const TodoList: React.FC = (): JSX.Element => {
   const [todos, setTodos] = useState<TodoItem[]>([])
   const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all')
 
-  useEffect(() => {
-    const getTodos = async (): Promise<void> => {
-      const receivedTodos = await callApi({
-        method: 'GET',
-        path: 'todo',
-      })
-      if (typeof receivedTodos === 'string') {
-        setTodos([])
-      } else {
-        setTodos(receivedTodos)
-      }
+  const getTodos = useCallback(async (): Promise<void> => {
+    const receivedTodos = await callApi({
+      method: 'GET',
+      path: 'todo',
+    })
+    if (typeof receivedTodos === 'string') {
+      setTodos([])
+    } else {
+      setTodos(receivedTodos)
     }
-    getTodos()
   }, [])
+
+  useEffect(() => {
+    getTodos()
+  }, [getTodos])
 
   const filteredTodos: TodoItem[] = useMemo((): TodoItem[] => {
     switch (filter) {
@@ -49,7 +50,7 @@ const TodoList: React.FC = (): JSX.Element => {
     }
   }, [filter, todos])
 
-  const addTodo = useCallback(async (newTodo: NewTodo): Promise<void> => {
+  const addTodo = useCallback(async (newTodo: NewTodoItem): Promise<void> => {
     const createdTodo: TodoItem = await callApi({
       method: 'POST',
       path: 'todo',
@@ -73,6 +74,7 @@ const TodoList: React.FC = (): JSX.Element => {
         path: `todo/${id}`,
         payload: { completed },
       })
+
       setTodos((prevTodos) =>
         prevTodos.map((todo) => {
           if (todo.id === id) {

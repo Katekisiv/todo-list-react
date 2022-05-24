@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import { CloseIcon } from '../../Icons'
 import styles from './Todo.module.css'
 
-interface Todo {
+interface TodoItem {
   id: number
   userId: number
   value: string
@@ -15,7 +15,7 @@ type ChangeEvent = React.ChangeEvent<HTMLInputElement>
 type KeyEvent = React.KeyboardEvent<HTMLInputElement>
 
 const Todo: React.FC<{
-  todo: Todo
+  todo: TodoItem
   completeTodo: (id: number, completed: boolean) => Promise<void>
   updateTodo: (id: number, value: string) => Promise<void>
   deleteTodo: (id: number) => Promise<void>

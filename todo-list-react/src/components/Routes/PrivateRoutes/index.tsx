@@ -5,7 +5,7 @@ interface Props {
   children?: React.ReactNode
 }
 
-const PrivateRoutes: ({ children }: Props) => JSX.Element = ({ children }) => {
+function PrivateRoutes({ children }: Props): JSX.Element {
   const location = useLocation()
   const isAuth = localStorage.getItem('token')
 

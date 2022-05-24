@@ -37,15 +37,19 @@ const NewTodo: React.FC<Props> = ({ addTodoProps }): JSX.Element => {
     setValue(event.target.value)
   }, [])
 
-  const setTodoComplete = (event: ChangeEvent): void => {
+  const setTodoComplete = useCallback((event: ChangeEvent): void => {
     setCompleted(event.target.checked)
-  }
+  }, [])
 
-  const checkEnter = async (event: KeyEvent): Promise<void> => {
-    if (event.key === 'Enter') {
-      await addTodo()
-    }
-  }
+  const checkEnter = useCallback(
+    async (event: KeyEvent): Promise<void> => {
+      if (event.key === 'Enter') {
+        await addTodo()
+      }
+    },
+    [addTodo]
+  )
+
   return (
     <section className={classNames(styles.section, styles.newTodo)}>
       <label

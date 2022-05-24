@@ -3,6 +3,7 @@ import classNames from 'classnames'
 import { useLocation, useNavigate } from 'react-router-dom'
 import styles from './Auth.module.css'
 import { callApi } from '../../Api/callApi'
+import { CHECK_EMAIL, CHECK_PASSWORD } from '../../constants/regularExpressions'
 
 type ChangeEvent = React.ChangeEvent<HTMLInputElement>
 
@@ -44,24 +45,22 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
   )
 
   const checkInputData = useCallback((): boolean => {
-    if (
-      !/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
-        email.toLowerCase()
-      )
-    ) {
+    if (!CHECK_EMAIL.test(email.toLowerCase())) {
       setError({
         errorType: 'email',
         error: 'Wrong email',
       })
       return false
     }
-    if (!/^[a-zA-Zа-яА-Я0-9]{8,}$/.test(password.trim())) {
+
+    if (!CHECK_PASSWORD.test(password.trim())) {
       setError({
         errorType: 'password',
         error: 'Password must have at least 8 symbols',
       })
       return false
     }
+
     if (page === 'registration' && password !== confirmPassword) {
       setError({
         errorType: 'password',
@@ -72,27 +71,23 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
     return true
   }, [confirmPassword, email, page, password])
 
-  const setUsersData = (event: ChangeEvent): void => {
-    // eslint-disable-next-line default-case
-    switch (event.target.type) {
-      case 'email':
-        setEmail(event.target.value)
-        break
-      case 'password':
-        if (event.target.placeholder === 'Password') {
-          setPassword(event.target.value)
-          break
-        } else {
-          setConfirmPassword(event.target.value)
-          break
-        }
-    }
+  const setUserEmail = (event: ChangeEvent): void => {
+    setEmail(event.target.value)
+  }
+
+  const setUserPassword = (event: ChangeEvent): void => {
+    setPassword(event.target.value)
+  }
+
+  const setUserConfirmPassword = (event: ChangeEvent): void => {
+    setConfirmPassword(event.target.value)
   }
 
   const loginUser = useCallback(async () => {
     if (!checkInputData()) {
       return
     }
+
     const loginResult = await callApi({
       method: 'POST',
       path: 'auth/login',
@@ -101,6 +96,7 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
         password,
       },
     })
+
     if (typeof loginResult === 'string' && loginResult.startsWith('error')) {
       if (loginResult === 'error:User not found') {
         setError({
@@ -122,6 +118,7 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
     if (!checkInputData()) {
       return
     }
+
     const registerResult = await callApi({
       method: 'POST',
       path: 'auth/registration',
@@ -130,6 +127,7 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
         password,
       },
     })
+
     if (
       typeof registerResult === 'string' &&
       registerResult.startsWith('error')
@@ -158,7 +156,7 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
         <input
           type="email"
           value={email}
-          onChange={setUsersData}
+          onChange={setUserEmail}
           className={styles.userDataInput}
           placeholder="Email"
         />
@@ -168,7 +166,7 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
         <input
           type="password"
           value={password}
-          onChange={setUsersData}
+          onChange={setUserPassword}
           className={styles.userDataInput}
           placeholder="Password"
         />
@@ -179,7 +177,7 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
           <input
             type="password"
             value={confirmPassword}
-            onChange={setUsersData}
+            onChange={setUserConfirmPassword}
             className={styles.userDataInput}
             placeholder="Confirm password"
           />

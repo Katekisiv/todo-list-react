@@ -1,7 +1,7 @@
 import './normalize.css'
 import './App.css'
 import React from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Outlet, Route, Routes } from 'react-router-dom'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import TodoPage from './pages/TodoPage'
@@ -15,10 +15,13 @@ const App: React.FC = () => {
         path="/"
         element={
           <PrivateRoutes>
-            <TodoPage />
+            <Outlet />
           </PrivateRoutes>
         }
-      />
+      >
+        <Route index element={<TodoPage />} />
+      </Route>
+
       <Route
         path="/login"
         element={
