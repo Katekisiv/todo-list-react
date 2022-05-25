@@ -71,17 +71,17 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
     return true
   }, [confirmPassword, email, page, password])
 
-  const setUserEmail = (event: ChangeEvent): void => {
+  const setUserEmail = useCallback((event: ChangeEvent): void => {
     setEmail(event.target.value)
-  }
+  }, [])
 
-  const setUserPassword = (event: ChangeEvent): void => {
+  const setUserPassword = useCallback((event: ChangeEvent): void => {
     setPassword(event.target.value)
-  }
+  }, [])
 
-  const setUserConfirmPassword = (event: ChangeEvent): void => {
+  const setUserConfirmPassword = useCallback((event: ChangeEvent): void => {
     setConfirmPassword(event.target.value)
-  }
+  }, [])
 
   const loginUser = useCallback(async () => {
     if (!checkInputData()) {
