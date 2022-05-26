@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import styles from './Auth.module.css'
 import { callApi } from '../../Api/callApi'
 import { CHECK_EMAIL, CHECK_PASSWORD } from '../../constants/regularExpressions'
-import { useAuth } from '../../hooks/useAuth'
+import { useAuth } from '../../hooks/AuthProvider'
 
 type ChangeEvent = React.ChangeEvent<HTMLInputElement>
 
@@ -24,7 +24,7 @@ interface LocationState {
 const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
   page,
 }): JSX.Element => {
-  const { login } = useAuth()
+  const { dispatch } = useAuth()
 
   const navigate = useNavigate()
   const location = useLocation() as LocationState
@@ -42,9 +42,15 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
     (token: string, refreshToken: string): void => {
       localStorage.setItem('token', token)
       localStorage.setItem('refreshToken', refreshToken)
-      login(token, () => navigate(fromPage, { replace: true }))
+      navigate(fromPage, { replace: true })
+      if (dispatch) {
+        dispatch({
+          type: 'login',
+          payload: { token },
+        })
+      }
     },
-    [fromPage, login, navigate]
+    [dispatch, fromPage, navigate]
   )
 
   const checkInputData = useCallback((): boolean => {

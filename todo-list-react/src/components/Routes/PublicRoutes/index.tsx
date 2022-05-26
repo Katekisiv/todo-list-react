@@ -1,15 +1,15 @@
 import React from 'react'
 import { Navigate } from 'react-router-dom'
-import { useAuth } from '../../../hooks/useAuth'
+import { useAuth } from '../../../hooks/AuthProvider'
 
 interface Props {
   children?: React.ReactNode
 }
 
 function PublicRoute({ children }: Props): JSX.Element {
-  const { auth } = useAuth()
+  const { state } = useAuth()
 
-  return auth ? <Navigate to="/" /> : <>{children}</>
+  return state.auth ? <Navigate to="/" /> : <>{children}</>
 }
 
 export default PublicRoute

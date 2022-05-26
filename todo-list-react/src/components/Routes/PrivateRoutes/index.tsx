@@ -1,6 +1,6 @@
 import React from 'react'
 import { useLocation, Navigate } from 'react-router-dom'
-import { useAuth } from '../../../hooks/useAuth'
+import { useAuth } from '../../../hooks/AuthProvider'
 
 interface Props {
   children?: React.ReactNode
@@ -8,9 +8,9 @@ interface Props {
 
 function PrivateRoutes({ children }: Props): JSX.Element {
   const location = useLocation()
-  const { auth } = useAuth()
+  const { state } = useAuth()
 
-  return auth ? (
+  return state.auth ? (
     <>{children}</>
   ) : (
     <Navigate to="/login" state={{ from: location }} />

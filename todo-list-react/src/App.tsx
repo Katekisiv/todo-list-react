@@ -1,18 +1,24 @@
 import './normalize.css'
 import './App.css'
-import React, { useContext } from 'react'
+import React, { useReducer } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import TodoPage from './pages/TodoPage'
-import { AuthContext, AuthProvider } from './hooks/AuthProvider'
+import { AuthContext, userReducer } from './hooks/AuthProvider'
 
 const App: React.FC = () => {
-  const { auth } = useContext(AuthContext)
+  const token = localStorage.getItem('token')
+  const [state, dispatch] = useReducer(userReducer, { auth: token })
   return (
-    <AuthProvider>
+    <AuthContext.Provider
+      value={{
+        state,
+        dispatch,
+      }}
+    >
       <Routes>
-        {auth ? (
+        {state.auth ? (
           <Route path="/" element={<TodoPage />} />
         ) : (
           <>
@@ -22,7 +28,7 @@ const App: React.FC = () => {
           </>
         )}
       </Routes>
-    </AuthProvider>
+    </AuthContext.Provider>
   )
 }
 

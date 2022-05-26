@@ -2,13 +2,13 @@ import React, { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './Header.module.css'
 import { callApi } from '../../Api/callApi'
-import { useAuth } from '../../hooks/useAuth'
+import { useAuth } from '../../hooks/AuthProvider'
 
 const Header: React.FC<{
   titleNavBar: string
   removeRefreshToken?: () => void
 }> = ({ titleNavBar, removeRefreshToken }): JSX.Element => {
-  const { logout } = useAuth()
+  const { dispatch } = useAuth()
 
   const navigate = useNavigate()
 
@@ -20,8 +20,11 @@ const Header: React.FC<{
 
     localStorage.removeItem('token')
     localStorage.removeItem('refreshToken')
-    logout(() => navigate('/login', { replace: true }))
-  }, [logout, navigate])
+    navigate('/login', { replace: true })
+    if (dispatch) {
+      dispatch({ type: 'logout' })
+    }
+  }, [dispatch, navigate])
 
   const navigateToPage = useCallback(() => {
     if (titleNavBar === 'exit') {
