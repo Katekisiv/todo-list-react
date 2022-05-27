@@ -4,7 +4,7 @@ import { callApi } from '../../Api/callApi'
 import Todo from './Todo'
 import TodosInfo from './TodosInfo'
 import NewTodo from './NewTodo'
-import { useStore } from '../../hooks/AuthProvider'
+import { useStore } from '../../hooks/userReducer'
 import { actionTypes } from '../../constants/actionTypes'
 
 interface TodoItem {

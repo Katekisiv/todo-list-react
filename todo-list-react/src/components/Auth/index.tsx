@@ -4,7 +4,8 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import styles from './Auth.module.css'
 import { callApi } from '../../Api/callApi'
 import { CHECK_EMAIL, CHECK_PASSWORD } from '../../constants/regularExpressions'
-import { useStore } from '../../hooks/AuthProvider'
+import { useStore } from '../../hooks/userReducer'
+import { actionTypes } from '../../constants/actionTypes'
 
 type ChangeEvent = React.ChangeEvent<HTMLInputElement>
 
@@ -45,7 +46,7 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
       navigate(fromPage, { replace: true })
       if (dispatch) {
         dispatch({
-          type: 'login',
+          type: actionTypes.LOGIN,
           payload: { token },
         })
       }

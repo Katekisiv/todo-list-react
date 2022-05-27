@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import { actionTypes, ActionType } from '../constants/actionTypes'
+import { actionTypes } from '../constants/actionTypes'
 import { deepCloning } from '../helpers/deepCloning'
 
 interface TodoItem {
@@ -9,7 +9,7 @@ interface TodoItem {
   completed: boolean
 }
 
-type Action = { type: ActionType; payload?: Record<any, any> }
+type Action = { type: actionTypes; payload?: Record<any, any> }
 type Dispatch = (action: Action) => void
 type State = { auth: string | null | undefined; todos: TodoItem[] }
 type ContextProps = {
