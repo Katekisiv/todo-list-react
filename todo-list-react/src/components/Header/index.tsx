@@ -2,7 +2,8 @@ import React, { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './Header.module.css'
 import { callApi } from '../../Api/callApi'
-import { useStore } from '../../hooks/AuthProvider'
+import { useStore } from '../../hooks/userReducer'
+import { actionTypes } from '../../constants/actionTypes'
 
 const Header: React.FC<{
   titleNavBar: string
@@ -22,7 +23,7 @@ const Header: React.FC<{
     localStorage.removeItem('refreshToken')
     navigate('/login', { replace: true })
     if (dispatch) {
-      dispatch({ type: 'logout' })
+      dispatch({ type: actionTypes.LOGOUT })
     }
   }, [dispatch, navigate])
 

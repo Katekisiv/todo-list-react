@@ -5,7 +5,7 @@ import { Route, Routes } from 'react-router-dom'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import TodoPage from './pages/TodoPage'
-import { AuthContext, userReducer } from './hooks/AuthProvider'
+import { AuthContext, userReducer } from './hooks/userReducer'
 
 const App: React.FC = () => {
   const token = localStorage.getItem('token')
