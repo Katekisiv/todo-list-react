@@ -4,6 +4,8 @@ import { callApi } from '../../Api/callApi'
 import Todo from './Todo'
 import TodosInfo from './TodosInfo'
 import NewTodo from './NewTodo'
+import { useStore } from '../../hooks/AuthProvider'
+import { actionTypes } from '../../constants/actionTypes'
 
 interface TodoItem {
   id: number
@@ -18,7 +20,7 @@ interface NewTodoItem {
 }
 
 const TodoList: React.FC = (): JSX.Element => {
-  const [todos, setTodos] = useState<TodoItem[]>([])
+  const { state, dispatch } = useStore()
   const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all')
 
   const getTodos = useCallback(async (): Promise<void> => {
@@ -26,12 +28,19 @@ const TodoList: React.FC = (): JSX.Element => {
       method: 'GET',
       path: 'todo',
     })
+
     if (typeof receivedTodos === 'string') {
-      setTodos([])
+      dispatch({
+        type: actionTypes.GET_TODO,
+        payload: { todos: [] },
+      })
     } else {
-      setTodos(receivedTodos)
+      dispatch({
+        type: actionTypes.GET_TODO,
+        payload: { todos: receivedTodos },
+      })
     }
-  }, [])
+  }, [dispatch])
 
   useEffect(() => {
     getTodos()
@@ -40,32 +49,44 @@ const TodoList: React.FC = (): JSX.Element => {
   const filteredTodos: TodoItem[] = useMemo((): TodoItem[] => {
     switch (filter) {
       case 'all':
-        return todos
+        return state.todos
       case 'active':
-        return todos.filter((todo) => !todo.completed)
+        return state.todos.filter((todo) => !todo.completed)
       case 'completed':
-        return todos.filter((todo) => todo.completed)
+        return state.todos.filter((todo) => todo.completed)
       default:
-        return todos
+        return state.todos
     }
-  }, [filter, todos])
+  }, [filter, state.todos])
 
-  const addTodo = useCallback(async (newTodo: NewTodoItem): Promise<void> => {
-    const createdTodo: TodoItem = await callApi({
-      method: 'POST',
-      path: 'todo',
-      payload: newTodo,
-    })
-    setTodos((prevTodos) => [...prevTodos, createdTodo])
-  }, [])
+  const addTodo = useCallback(
+    async (newTodo: NewTodoItem): Promise<void> => {
+      const createdTodo: TodoItem = await callApi({
+        method: 'POST',
+        path: 'todo',
+        payload: newTodo,
+      })
+      dispatch({
+        type: actionTypes.CREATE_TODO,
+        payload: { todo: createdTodo },
+      })
+    },
+    [dispatch]
+  )
 
-  const deleteTodo = useCallback(async (id: number): Promise<void> => {
-    await callApi({
-      method: 'DELETE',
-      path: `todo/${id}`,
-    })
-    setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id))
-  }, [])
+  const deleteTodo = useCallback(
+    async (id: number): Promise<void> => {
+      await callApi({
+        method: 'DELETE',
+        path: `todo/${id}`,
+      })
+      dispatch({
+        type: actionTypes.DELETE_TODO,
+        payload: { todoId: id },
+      })
+    },
+    [dispatch]
+  )
 
   const completeTodo = useCallback(
     async (id: number, completed: boolean): Promise<void> => {
@@ -74,17 +95,12 @@ const TodoList: React.FC = (): JSX.Element => {
         path: `todo/${id}`,
         payload: { completed },
       })
-
-      setTodos((prevTodos) =>
-        prevTodos.map((todo) => {
-          if (todo.id === id) {
-            todo.completed = completed
-          }
-          return todo
-        })
-      )
+      dispatch({
+        type: actionTypes.COMPLETE_TODO,
+        payload: { todoId: id, completed },
+      })
     },
-    []
+    [dispatch]
   )
 
   const updateTodo = useCallback(
@@ -94,16 +110,12 @@ const TodoList: React.FC = (): JSX.Element => {
         path: `todo/${id}`,
         payload: { value },
       })
-      setTodos((prevTodos) =>
-        prevTodos.map((todo) => {
-          if (todo.id === id) {
-            todo.value = value
-          }
-          return { ...todo }
-        })
-      )
+      dispatch({
+        type: actionTypes.UPDATE_TODO,
+        payload: { todoId: id, value },
+      })
     },
-    []
+    [dispatch]
   )
 
   const deleteCompletedTodos = useCallback(async (): Promise<void> => {
@@ -111,8 +123,10 @@ const TodoList: React.FC = (): JSX.Element => {
       method: 'DELETE',
       path: `todo?completed=true`,
     })
-    setTodos((prevTodos) => prevTodos.filter((todo) => !todo.completed))
-  }, [])
+    dispatch({
+      type: actionTypes.DELETE_COMPLETED_TODOS,
+    })
+  }, [dispatch])
 
   return (
     <>

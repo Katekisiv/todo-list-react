@@ -2,13 +2,13 @@ import React, { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './Header.module.css'
 import { callApi } from '../../Api/callApi'
-import { useAuth } from '../../hooks/AuthProvider'
+import { useStore } from '../../hooks/AuthProvider'
 
 const Header: React.FC<{
   titleNavBar: string
   removeRefreshToken?: () => void
 }> = ({ titleNavBar, removeRefreshToken }): JSX.Element => {
-  const { dispatch } = useAuth()
+  const { dispatch } = useStore()
 
   const navigate = useNavigate()
 

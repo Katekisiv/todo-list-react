@@ -1,4 +1,4 @@
-import { BASE_URL } from '../constants/api.js'
+import { BASE_URL } from '../constants/api'
 
 interface params {
   method: string
