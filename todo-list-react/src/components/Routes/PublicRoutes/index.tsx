@@ -1,14 +1,15 @@
 import React from 'react'
 import { Navigate } from 'react-router-dom'
+import { useAuth } from '../../../hooks/AuthProvider'
 
 interface Props {
   children?: React.ReactNode
 }
 
 function PublicRoute({ children }: Props): JSX.Element {
-  const isAuth = localStorage.getItem('token')
+  const { state } = useAuth()
 
-  return isAuth ? <Navigate to="/" /> : <>{children}</>
+  return state.auth ? <Navigate to="/" /> : <>{children}</>
 }
 
 export default PublicRoute

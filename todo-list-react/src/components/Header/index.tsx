@@ -2,14 +2,17 @@ import React, { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './Header.module.css'
 import { callApi } from '../../Api/callApi'
+import { useAuth } from '../../hooks/AuthProvider'
 
 const Header: React.FC<{
   titleNavBar: string
   removeRefreshToken?: () => void
 }> = ({ titleNavBar, removeRefreshToken }): JSX.Element => {
+  const { dispatch } = useAuth()
+
   const navigate = useNavigate()
 
-  const logout = useCallback(async () => {
+  const logoutUser = useCallback(async () => {
     await callApi({
       method: 'POST',
       path: 'auth/logout',
@@ -18,18 +21,21 @@ const Header: React.FC<{
     localStorage.removeItem('token')
     localStorage.removeItem('refreshToken')
     navigate('/login', { replace: true })
-  }, [navigate])
+    if (dispatch) {
+      dispatch({ type: 'logout' })
+    }
+  }, [dispatch, navigate])
 
   const navigateToPage = useCallback(() => {
     if (titleNavBar === 'exit') {
       if (removeRefreshToken) {
         removeRefreshToken()
       }
-      logout()
+      logoutUser()
     } else {
       navigate(`/${titleNavBar}`)
     }
-  }, [logout, navigate, removeRefreshToken, titleNavBar])
+  }, [logoutUser, navigate, removeRefreshToken, titleNavBar])
 
   return (
     <header className={styles.header}>

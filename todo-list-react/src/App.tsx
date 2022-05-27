@@ -1,45 +1,34 @@
 import './normalize.css'
 import './App.css'
-import React from 'react'
+import React, { useReducer } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import TodoPage from './pages/TodoPage'
-import PrivateRoutes from './components/Routes/PrivateRoutes'
-import PublicRoutes from './components/Routes/PublicRoutes'
+import { AuthContext, userReducer } from './hooks/AuthProvider'
 
 const App: React.FC = () => {
+  const token = localStorage.getItem('token')
+  const [state, dispatch] = useReducer(userReducer, { auth: token })
   return (
-    <Routes>
-      <PrivateRoutes>
-        <Route index element={<TodoPage />} />
-      </PrivateRoutes>
-
-      <Route
-        path="/login"
-        element={
-          <PublicRoutes>
-            <LoginPage />
-          </PublicRoutes>
-        }
-      />
-      <Route
-        path="/registration"
-        element={
-          <PublicRoutes>
-            <RegisterPage />
-          </PublicRoutes>
-        }
-      />
-      <Route
-        path="*"
-        element={
-          <PublicRoutes>
-            <LoginPage />
-          </PublicRoutes>
-        }
-      />
-    </Routes>
+    <AuthContext.Provider
+      value={{
+        state,
+        dispatch,
+      }}
+    >
+      <Routes>
+        {state.auth ? (
+          <Route path="/" element={<TodoPage />} />
+        ) : (
+          <>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/registration" element={<RegisterPage />} />
+            <Route path="*" element={<LoginPage />} />
+          </>
+        )}
+      </Routes>
+    </AuthContext.Provider>
   )
 }
 

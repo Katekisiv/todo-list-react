@@ -1,6 +1,6 @@
 import React from 'react'
 import { useLocation, Navigate } from 'react-router-dom'
-import { Route } from 'react-router-dom'
+import { useAuth } from '../../../hooks/AuthProvider'
 
 interface Props {
   children?: React.ReactNode
@@ -8,13 +8,12 @@ interface Props {
 
 function PrivateRoutes({ children }: Props): JSX.Element {
   const location = useLocation()
-  const isAuth = localStorage.getItem('token')
+  const { state } = useAuth()
 
-  return (
-    <Route path="/">
-      {isAuth} ? {children} :{' '}
-      <Navigate to="/login" state={{ from: location }} />
-    </Route>
+  return state.auth ? (
+    <>{children}</>
+  ) : (
+    <Navigate to="/login" state={{ from: location }} />
   )
 }
 
