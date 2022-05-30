@@ -1,9 +1,15 @@
 import React, { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import styles from './Header.module.css'
 import { callApi } from '../../Api/callApi'
 import { useStore } from '../../hooks/userReducer'
 import { actionTypes } from '../../constants/actionTypes'
+import {
+  StyledContainer,
+  StyledHeader,
+  StyledHeaderTitle,
+  StyledNavigation,
+  StyledNavigationButton,
+} from './Header.style'
 
 const Header: React.FC<{
   titleNavBar: string
@@ -39,20 +45,16 @@ const Header: React.FC<{
   }, [logoutUser, navigate, removeRefreshToken, titleNavBar])
 
   return (
-    <header className={styles.header}>
-      <nav className={styles.navigation}>
-        <button
-          type="button"
-          className={styles.navigation__button}
-          onClick={navigateToPage}
-        >
+    <StyledHeader>
+      <StyledNavigation>
+        <StyledNavigationButton type="button" onClick={navigateToPage}>
           {titleNavBar}
-        </button>
-      </nav>
-      <div className={styles.container}>
-        <h1 className={styles.header__title}>Todo</h1>
-      </div>
-    </header>
+        </StyledNavigationButton>
+      </StyledNavigation>
+      <StyledContainer>
+        <StyledHeaderTitle>Todo</StyledHeaderTitle>
+      </StyledContainer>
+    </StyledHeader>
   )
 }
 

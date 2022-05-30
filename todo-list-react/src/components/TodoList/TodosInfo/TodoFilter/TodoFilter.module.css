@@ -1,9 +1,0 @@
-.todosInfoOption {
-    color: rgba(100, 100, 100, 0.9);
-    text-transform: capitalize;
-}
-
-.todosInfoOption.todosInfoStatusActive,
-.todosInfoOption.todosInfoStatusActive:hover {
-    color: #206efa;
-}

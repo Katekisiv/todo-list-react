@@ -1,7 +1,12 @@
 import React, { useCallback, useState } from 'react'
-import classNames from 'classnames'
 import { AddIcon } from '../../Icons'
-import styles from './NewTodo.module.css'
+import {
+  StyledNewTodo,
+  StyledNewTodoButton,
+  StyledNewTodoInput,
+  StyledNewTodoLabel,
+} from './NewTodo.style'
+import { InputBase } from '@mui/material'
 
 interface Todo {
   value: string
@@ -51,35 +56,20 @@ const NewTodo: React.FC<Props> = ({ addTodoProps }): JSX.Element => {
   )
 
   return (
-    <section className={classNames(styles.section, styles.newTodo)}>
-      <label
-        className={classNames(
-          styles.todoComplete,
-          completed ? styles.todoCompleteChecked : null
-        )}
-      >
-        <input
-          type="checkbox"
-          className={styles.newTodoCheckbox}
-          onChange={setTodoComplete}
-        />
-      </label>
-      <input
+    <StyledNewTodo>
+      <StyledNewTodoLabel completed={completed.toString()}>
+        <InputBase type="checkbox" onChange={setTodoComplete} />
+      </StyledNewTodoLabel>
+      <StyledNewTodoInput
         type="text"
-        className={classNames(styles.inputField, styles.newTodoInput)}
         value={value}
         onChange={setTodoValue}
         onKeyDown={checkEnter}
       />
-      <button type="button" className={styles.newTodoButton} onClick={addTodo}>
-        <AddIcon
-          className={styles.newTodoIcon}
-          viewBox="0 0 48 48"
-          height={22}
-          width={22}
-        />
-      </button>
-    </section>
+      <StyledNewTodoButton type="button" onClick={addTodo}>
+        <AddIcon viewBox="0 0 48 48" height={22} width={22} />
+      </StyledNewTodoButton>
+    </StyledNewTodo>
   )
 }
 

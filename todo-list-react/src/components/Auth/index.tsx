@@ -1,11 +1,17 @@
 import React, { useCallback, useState } from 'react'
-import classNames from 'classnames'
 import { useLocation, useNavigate } from 'react-router-dom'
-import styles from './Auth.module.css'
 import { callApi } from '../../Api/callApi'
 import { CHECK_EMAIL, CHECK_PASSWORD } from '../../constants/regularExpressions'
 import { useStore } from '../../hooks/userReducer'
 import { actionTypes } from '../../constants/actionTypes'
+import {
+  StyledLoginButton,
+  StyledLoginPage,
+  StyledLoginPageTopic,
+  StyledLoginUserData,
+  StyledLoginUserInput,
+  StyledUserDataError,
+} from './Auth.style'
 
 type ChangeEvent = React.ChangeEvent<HTMLInputElement>
 
@@ -160,43 +166,40 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
   }, [loginUser, page, registerUser])
 
   return (
-    <div className={classNames(styles.mainContainer, styles.loginPage)}>
-      <h1 className={styles.loginPageTopic}>{page}</h1>
-      <section className={styles.userData}>
-        <input
+    <StyledLoginPage>
+      <StyledLoginPageTopic>{page}</StyledLoginPageTopic>
+      <StyledLoginUserData>
+        <StyledLoginUserInput
           type="email"
           value={email}
           onChange={setUserEmail}
-          className={styles.userDataInput}
           placeholder="Email"
         />
         {error.errorType === 'email' ? (
-          <div className={styles.userDataError}>{error.error}</div>
+          <StyledUserDataError>{error.error}</StyledUserDataError>
         ) : null}
-        <input
+        <StyledLoginUserInput
           type="password"
           value={password}
           onChange={setUserPassword}
-          className={styles.userDataInput}
           placeholder="Password"
         />
         {error.errorType === 'password' ? (
-          <div className={styles.userDataError}>{error.error}</div>
+          <StyledUserDataError>{error.error}</StyledUserDataError>
         ) : null}
         {page === 'registration' ? (
-          <input
+          <StyledLoginUserInput
             type="password"
             value={confirmPassword}
             onChange={setUserConfirmPassword}
-            className={styles.userDataInput}
             placeholder="Confirm password"
           />
         ) : null}
-      </section>
-      <button type="submit" className={styles.loginButton} onClick={auth}>
+      </StyledLoginUserData>
+      <StyledLoginButton type="submit" onClick={auth}>
         {page}
-      </button>
-    </div>
+      </StyledLoginButton>
+    </StyledLoginPage>
   )
 }
 

@@ -1,5 +1,4 @@
 import './normalize.css'
-import './App.css'
 import React, { useReducer } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import LoginPage from './pages/LoginPage'

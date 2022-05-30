@@ -1,6 +1,5 @@
 import React, { Dispatch, SetStateAction, useCallback } from 'react'
-import classNames from 'classnames'
-import styles from './TodoFilter.module.css'
+import { StyledTodoFilter } from './TodoFilter.style'
 
 interface Props {
   filter: 'all' | 'active' | 'completed'
@@ -18,15 +17,9 @@ const TodoFilter: React.FC<Props> = ({
   }, [filter, setFilterProps])
 
   return (
-    <span
-      className={classNames(
-        styles.todosInfoOption,
-        isSelected ? styles.todosInfoStatusActive : null
-      )}
-      onClick={setFilter}
-    >
+    <StyledTodoFilter selected={isSelected} onClick={setFilter}>
       {filter}
-    </span>
+    </StyledTodoFilter>
   )
 }
 
