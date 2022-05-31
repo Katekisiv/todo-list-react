@@ -1,100 +1,90 @@
 import { styled } from '@mui/material/styles'
-import { ThemePalette } from '../../theme/palette'
+import { Button, InputBase, InputBaseProps } from '@mui/material'
 
-interface MuiTheme {
-  palette?: ThemePalette | undefined
-}
+import {
+  DivProps,
+  HeadingProps,
+  MuiButtonProps,
+  SectionProps,
+} from '../../constants/types'
 
-export const StyledLoginPage = styled((props: any) => <div {...props} />)(
-  ({ theme }) => {
-    const { palette }: MuiTheme = theme
+export const StyledLoginPage = styled((props: DivProps) => <div {...props} />)`
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  width: 460px;
+  margin-top: 50px;
+  margin-bottom: 20px;
+  padding: 30px 50px;
+  background-color: ${(props) => props.theme.palette.common.white};
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+`
 
-    return {
-      position: 'absolute',
-      top: '-100px',
-      left: '50%',
-      transform: 'translate(-50%, 0)',
-      width: '460px',
-      marginTop: '50px',
-      marginBottom: '20px',
-      padding: '30px 50px',
-      backgroundColor: palette?.common.white,
-      borderRadius: '10px',
-      boxShadow:
-        '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
-    }
-  }
-)
+export const StyledLoginPageTopic = styled((props: HeadingProps) => (
+  <h1 {...props} />
+))`
+  margin-bottom: 50px;
+  text-align: center;
+  text-transform: capitalize;
+`
 
-export const StyledLoginPageTopic = styled((props: any) => <h1 {...props} />)(
-  () => {
-    return {
-      marginBottom: '50px',
-      textAlign: 'center',
-      textTransform: 'capitalize',
-    }
-  }
-)
-
-export const StyledLoginUserData = styled((props: any) => (
+export const StyledLoginUserData = styled((props: SectionProps) => (
   <section {...props} />
-))(() => {
-  return {
-    display: 'flex',
-    flexWrap: 'wrap',
-    marginBottom: '50px',
+))`
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 50px;
+`
+export const StyledLoginUserInput = styled((props: InputBaseProps) => (
+  <InputBase {...props} />
+))`
+  flex: 100%;
+  outline: none;
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  background-color: inherit;
+  font-family: inherit;
+  border-bottom: 2px solid rgb(118, 118, 118);
+
+  :not(:first-of-type) {
+    margin-top: 40px;
   }
-})
+`
 
-export const StyledLoginUserInput = styled((props: any) => (
-  <input {...props} />
-))(() => {
-  return {
-    flex: '100%',
-    outline: 'none',
-    borderTop: 'none',
-    borderRight: 'none',
-    borderLeft: 'none',
-    ':not(:first-child)': {
-      marginTop: '40px',
-    },
+export const StyledLoginButton = styled((props: MuiButtonProps) => (
+  <Button {...props} />
+))`
+  display: block;
+  padding: 15px 30px;
+  margin-right: auto;
+  margin-left: auto;
+  border-radius: 10px;
+  font-family: inherit;
+  color: ${(props) => props.theme.palette.common.white};
+  background-image: linear-gradient(
+    90deg,
+    rgba(32, 110, 250, 1) 28%,
+    rgba(84, 32, 205, 1) 70%,
+    rgba(84, 44, 153, 1) 100%
+  );
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  text-transform: capitalize;
+  text-decoration: none;
+  width: fit-content;
+
+  :hover {
+    cursor: pointer;
+    box-shadow: 0 4px 8px 4px rgba(0, 0, 0, 0.2),
+      0 6px 20px 0 rgba(0, 0, 0, 0.19);
   }
-})
+`
 
-export const StyledLoginButton = styled((props: any) => <button {...props} />)(
-  ({ theme }) => {
-    const { palette }: MuiTheme = theme
-
-    return {
-      display: 'block',
-      padding: '15px 30px',
-      marginRight: 'auto',
-      marginLeft: 'auto',
-      borderRadius: '10px',
-      color: palette?.common.white,
-      backgroundImage:
-        'linear-gradient(90deg, rgba(32,110,250,1) 28%, rgba(84,32,205,1) 70%, rgba(84,44,153,1) 100%)',
-      boxShadow:
-        '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
-      textTransform: 'capitalize',
-      textDecoration: 'none',
-      width: 'fit-content',
-      ':hover': {
-        cursor: 'pointer',
-        boxShadow:
-          '0 4px 8px 4px rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
-      },
-    }
-  }
-)
-
-export const StyledUserDataError = styled((props: any) => <div {...props} />)(
-  ({ theme }) => {
-    const { palette }: MuiTheme = theme
-
-    return {
-      flex: '100%',
-      color: palette?.common.red,
-    }
-  }
-)
+export const StyledUserDataError = styled((props: DivProps) => (
+  <div {...props} />
+))`
+  flex: 100%;
+  color: ${(props) => props.theme.palette.common.red};
+`

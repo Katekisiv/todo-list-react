@@ -57,7 +57,7 @@ const NewTodo: React.FC<Props> = ({ addTodoProps }): JSX.Element => {
 
   return (
     <StyledNewTodo>
-      <StyledNewTodoLabel completed={completed.toString()}>
+      <StyledNewTodoLabel completed={completed}>
         <InputBase type="checkbox" onChange={setTodoComplete} />
       </StyledNewTodoLabel>
       <StyledNewTodoInput

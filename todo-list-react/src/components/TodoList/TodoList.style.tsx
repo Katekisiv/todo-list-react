@@ -1,33 +1,21 @@
 import { styled } from '@mui/material/styles'
-import { ThemePalette } from '../../theme/palette'
 import { List } from '@mui/material'
+import { MuiListProps, SectionProps } from '../../constants/types'
 
-interface MuiTheme {
-  palette?: ThemePalette | undefined
-}
+export const StyledTodos = styled((props: SectionProps) => (
+  <section {...props} />
+))`
+  background-color: ${(props) => props.theme.palette.common.white};
+  margin-bottom: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+`
 
-export const StyledTodos = styled((props: any) => <section {...props} />)(
-  ({ theme }) => {
-    const { palette }: MuiTheme = theme
-
-    return {
-      marginTop: '10px',
-      marginBottom: '20px',
-      backgroundColor: palette?.common.white,
-      borderRadius: '10px',
-      boxShadow:
-        '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
-    }
-  }
-)
-
-export const StyledTodoList = styled((props: any) => <List {...props} />)(
-  () => {
-    return {
-      display: 'flex',
-      flexWrap: 'wrap',
-      paddingTop: 0,
-      paddingBottom: 0,
-    }
-  }
-)
+export const StyledTodoList = styled((props: MuiListProps) => (
+  <List {...props} />
+))`
+  display: flex;
+  flex-wrap: wrap;
+  padding-top: 0;
+  padding-bottom: 0;
+`
