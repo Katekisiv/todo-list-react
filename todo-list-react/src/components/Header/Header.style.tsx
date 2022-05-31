@@ -1,76 +1,63 @@
 import { styled } from '@mui/material/styles'
-import { ThemePalette } from '../../theme/palette'
 import BackgroundImage from '../Images/background.jpg'
+import { Button } from '@mui/material'
+import {
+  DivProps,
+  HeaderProps,
+  HeadingProps,
+  MuiButtonProps,
+  NavProps,
+} from '../../constants/types'
 
-interface MuiTheme {
-  palette?: ThemePalette | undefined
-}
+export const StyledHeader = styled((props: HeaderProps) => (
+  <header {...props} />
+))`
+  height: 200px;
+  text-align: center;
+  background-image: url(${BackgroundImage});
+  background-size: cover;
+`
 
-export const StyledHeader = styled((props: any) => <header {...props} />)(
-  () => {
-    return {
-      height: '200px',
-      textAlign: 'center',
-      backgroundImage: `url(${BackgroundImage})`,
-      backgroundSize: 'cover',
-    }
+export const StyledNavigation = styled((props: NavProps) => <nav {...props} />)`
+  max-width: 500px;
+  margin-right: auto;
+  margin-left: auto;
+  padding-top: 20px;
+  padding-right: 20px;
+  display: flex;
+  justify-content: flex-end;
+  font-size: 20px;
+`
+
+export const StyledNavigationButton = styled((props: MuiButtonProps) => (
+  <Button {...props} />
+))`
+  padding: 0 10px;
+  color: ${(props) => props.theme.palette.common.white};
+  cursor: pointer;
+  text-transform: capitalize;
+  text-decoration: none;
+  font-family: inherit;
+  font-size: inherit;
+
+  :not(:last-child) {
+    border-right: 1px solid ${(props) => props.theme.palette.common.white};
   }
-)
+`
 
-export const StyledNavigation = styled((props: any) => <nav {...props} />)(
-  () => {
-    return {
-      maxWidth: '500px',
-      marginRight: 'auto',
-      marginLeft: 'auto',
-      paddingTop: '20px',
-      paddingRight: '20px',
-      display: 'flex',
-      justifyContent: 'flex-end',
-      fontSize: '20px',
-    }
-  }
-)
+export const StyledContainer = styled((props: DivProps) => <div {...props} />)`
+  width: 500px;
+  padding: 20px;
+  margin-right: auto;
+  margin-left: auto;
+`
 
-export const StyledNavigationButton = styled((props: any) => (
-  <button {...props} />
-))(({ theme }) => {
-  const { palette }: MuiTheme = theme
-
-  return {
-    paddingRight: '10px',
-    paddingLeft: '10px',
-    color: palette?.common.white,
-    cursor: 'pointer',
-    textTransform: 'capitalize',
-    textDecoration: 'none',
-    ':not(:last-child)': {
-      borderRight: `1px solid ${palette?.common.white}`,
-    },
-  }
-})
-
-export const StyledContainer = styled((props: any) => <div {...props} />)(
-  () => {
-    return {
-      width: '500px',
-      padding: '20px',
-      marginRight: 'auto',
-      marginLeft: 'auto',
-    }
-  }
-)
-
-export const StyledHeaderTitle = styled((props: any) => <h1 {...props} />)(
-  ({ theme }) => {
-    const { palette }: MuiTheme = theme
-
-    return {
-      marginTop: '20px',
-      textAlign: 'left',
-      textTransform: 'uppercase',
-      letterSpacing: '10px',
-      color: palette?.common.white,
-    }
-  }
-)
+export const StyledHeaderTitle = styled((props: HeadingProps) => (
+  <h1 {...props} />
+))`
+  margin-top: 20px;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 10px;
+  color: ${(props) => props.theme.palette.common.white};
+`

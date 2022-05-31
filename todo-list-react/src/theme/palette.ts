@@ -16,16 +16,16 @@ const ACCENT = {
   darker: 'rgba(84,44,153,1)',
 }
 
-const palette = {
-  common: { ...COMMON },
-  secondary: { ...SECONDARY },
-  accent: { ...ACCENT },
-}
-
 export interface ThemePalette {
   common: { [key: string]: string }
   secondary: { [key: string]: string }
   accent: { [key: string]: string }
+}
+
+const palette: ThemePalette = {
+  common: { ...COMMON },
+  secondary: { ...SECONDARY },
+  accent: { ...ACCENT },
 }
 
 export default palette

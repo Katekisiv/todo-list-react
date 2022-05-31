@@ -70,12 +70,12 @@ const Todo: React.FC<{
   return (
     <StyledTodoItem>
       <StyledTodoComplete
-        completed={todo.completed.toString()}
+        completed={todo.completed}
         onClick={completeTodoValue}
       />
       <StyledTodoInput
         type="text"
-        completed={todo.completed.toString()}
+        completed={todo.completed}
         readOnly={readOnly}
         value={todoValue}
         onChange={updateTodoValue}
