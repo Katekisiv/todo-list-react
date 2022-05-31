@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import styles from './TodoList.module.css'
 import { callApi } from '../../Api/callApi'
 import Todo from './Todo'
 import TodosInfo from './TodosInfo'
 import NewTodo from './NewTodo'
 import { useStore } from '../../hooks/userReducer'
 import { actionTypes } from '../../constants/actionTypes'
+import { StyledTodoList, StyledTodos } from './TodoList.style'
 
 interface TodoItem {
   id: number
@@ -132,8 +132,8 @@ const TodoList: React.FC = (): JSX.Element => {
     <>
       <NewTodo addTodoProps={addTodo} />
 
-      <section className={styles.section}>
-        <ul className={styles.todos}>
+      <StyledTodos>
+        <StyledTodoList>
           {filteredTodos.map((todo) => (
             <Todo
               key={todo.id}
@@ -143,7 +143,7 @@ const TodoList: React.FC = (): JSX.Element => {
               deleteTodo={deleteTodo}
             />
           ))}
-        </ul>
+        </StyledTodoList>
 
         <TodosInfo
           filteredTodosLength={filteredTodos.length}
@@ -151,7 +151,7 @@ const TodoList: React.FC = (): JSX.Element => {
           setFilter={setFilter}
           deleteCompletedTodos={deleteCompletedTodos}
         />
-      </section>
+      </StyledTodos>
     </>
   )
 }

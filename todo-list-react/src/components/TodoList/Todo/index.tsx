@@ -1,7 +1,11 @@
 import React, { useCallback, useState } from 'react'
-import classNames from 'classnames'
 import { CloseIcon } from '../../Icons'
-import styles from './Todo.module.css'
+import {
+  StyledTodoComplete,
+  StyledTodoInput,
+  StyledTodoItem,
+} from './Todo.style'
+import { ListItemButton, ListItemIcon } from '@mui/material'
 
 interface TodoItem {
   id: number
@@ -64,21 +68,14 @@ const Todo: React.FC<{
   )
 
   return (
-    <li className={styles.todo}>
-      <div
-        className={classNames(
-          styles.todoComplete,
-          todo.completed ? styles.todoCompleteChecked : null
-        )}
+    <StyledTodoItem>
+      <StyledTodoComplete
+        completed={todo.completed.toString()}
         onClick={completeTodoValue}
       />
-      <input
+      <StyledTodoInput
         type="text"
-        className={classNames(
-          styles.todoInput,
-          styles.inputField,
-          todo.completed ? styles.todoValueCompleted : null
-        )}
+        completed={todo.completed.toString()}
         readOnly={readOnly}
         value={todoValue}
         onChange={updateTodoValue}
@@ -86,14 +83,12 @@ const Todo: React.FC<{
         onKeyDown={checkEnterEvent}
         onBlur={onBlur}
       />
-      <button
-        type="button"
-        className={classNames(styles.todoButton, styles.todoButtonDelete)}
-        onClick={deleteTodoItem}
-      >
-        <CloseIcon height={22} width={22} viewBox="0 0 48 48" />
-      </button>
-    </li>
+      <ListItemButton onClick={deleteTodoItem}>
+        <ListItemIcon>
+          <CloseIcon height={22} width={22} viewBox="0 0 48 48" />
+        </ListItemIcon>
+      </ListItemButton>
+    </StyledTodoItem>
   )
 }
 

@@ -1,6 +1,10 @@
 import React, { Dispatch, SetStateAction } from 'react'
-import styles from './TodosInfo.module.css'
 import TodoFilter from './TodoFilter'
+import {
+  StyledDeleteCompletedTodos,
+  StyledTodosInfo,
+  StyledTodosInfoStatus,
+} from './TodosInfo.style'
 
 interface Props {
   filteredTodosLength: number
@@ -20,9 +24,9 @@ const TodosInfo: React.FC<Props> = ({
   deleteCompletedTodos,
 }): JSX.Element => {
   return (
-    <div className={styles.todosInfo}>
+    <StyledTodosInfo>
       <span>{filteredTodosLength} items left</span>
-      <div className={styles.todosInfoStatus}>
+      <StyledTodosInfoStatus>
         {filters.map((filter) => (
           <TodoFilter
             key={filter}
@@ -31,15 +35,11 @@ const TodosInfo: React.FC<Props> = ({
             isSelected={filter === activeFilter}
           />
         ))}
-      </div>
-      <button
-        type="button"
-        className={styles.todosInfoDelete}
-        onClick={deleteCompletedTodos}
-      >
+      </StyledTodosInfoStatus>
+      <StyledDeleteCompletedTodos type="button" onClick={deleteCompletedTodos}>
         Clear Completed
-      </button>
-    </div>
+      </StyledDeleteCompletedTodos>
+    </StyledTodosInfo>
   )
 }
 
