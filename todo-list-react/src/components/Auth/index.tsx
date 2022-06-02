@@ -1,24 +1,27 @@
-import React, { useCallback, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import React, { useCallback } from 'react'
+//import {useState} from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
+import { Form, Field, FieldMetaState } from 'react-final-form'
 import { callApi } from '../../Api/callApi'
-import { CHECK_EMAIL, CHECK_PASSWORD } from '../../constants/regularExpressions'
 import { useStore } from '../../hooks/userReducer'
 import { actionTypes } from '../../constants/actionTypes'
+import { validationSchema } from '../../constants/validationSchema'
 import {
   StyledLoginButton,
   StyledLoginPage,
   StyledLoginPageTopic,
-  StyledLoginUserData,
+  StyledLoginForm,
   StyledLoginUserInput,
   StyledUserDataError,
+  StyledUserSex,
+  StyledUserSexOption,
+  StyledUserBirthday,
 } from './Auth.style'
+import { reach } from 'yup'
+import { setIn } from 'final-form'
 
-type ChangeEvent = React.ChangeEvent<HTMLInputElement>
-
-type Error = {
-  errorType: string
-  error: string
-}
+// type ChangeEvent = React.ChangeEvent<HTMLInputElement>
 
 interface LocationState {
   state: {
@@ -37,14 +40,6 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
   const location = useLocation() as LocationState
   const fromPage = location.state?.from.page || '/'
 
-  const [email, setEmail] = useState<string>('')
-  const [password, setPassword] = useState<string>('')
-  const [confirmPassword, setConfirmPassword] = useState<string>('')
-  const [error, setError] = useState<Error>({
-    errorType: '',
-    error: '',
-  })
-
   const saveAuthData = useCallback(
     (token: string, refreshToken: string): void => {
       localStorage.setItem('token', token)
@@ -60,145 +55,272 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
     [dispatch, fromPage, navigate]
   )
 
-  const checkInputData = useCallback((): boolean => {
-    if (!CHECK_EMAIL.test(email.toLowerCase())) {
-      setError({
-        errorType: 'email',
-        error: 'Wrong email',
-      })
-      return false
-    }
-
-    if (!CHECK_PASSWORD.test(password.trim())) {
-      setError({
-        errorType: 'password',
-        error: 'Password must have at least 8 symbols',
-      })
-      return false
-    }
-
-    if (page === 'registration' && password !== confirmPassword) {
-      setError({
-        errorType: 'password',
-        error: 'Passwords are not similar',
-      })
-      return false
-    }
-    return true
-  }, [confirmPassword, email, page, password])
-
-  const setUserEmail = useCallback((event: ChangeEvent): void => {
-    setEmail(event.target.value)
-  }, [])
-
-  const setUserPassword = useCallback((event: ChangeEvent): void => {
-    setPassword(event.target.value)
-  }, [])
-
-  const setUserConfirmPassword = useCallback((event: ChangeEvent): void => {
-    setConfirmPassword(event.target.value)
-  }, [])
-
-  const loginUser = useCallback(async () => {
-    if (!checkInputData()) {
-      return
-    }
-
-    const loginResult = await callApi({
-      method: 'POST',
-      path: 'auth/login',
-      payload: {
-        email,
-        password,
-      },
-    })
-
-    if (typeof loginResult === 'string' && loginResult.startsWith('error')) {
-      if (loginResult === 'error:User not found') {
-        setError({
-          errorType: 'email',
-          error: 'User not found',
-        })
-      } else {
-        setError({
-          errorType: 'password',
-          error: 'Wrong password',
-        })
+  const loginUser = useCallback(
+    async (payload: { email: string; password: string }) => {
+      let errors = {}
+      const setError = (key: string, value: any) => {
+        errors = setIn(errors, key, value)
       }
-      return
-    }
-    saveAuthData(loginResult.token, loginResult.refreshToken)
-  }, [checkInputData, email, password, saveAuthData])
 
-  const registerUser = useCallback(async () => {
-    if (!checkInputData()) {
-      return
-    }
-
-    const registerResult = await callApi({
-      method: 'POST',
-      path: 'auth/registration',
-      payload: {
-        email,
-        password,
-      },
-    })
-
-    if (
-      typeof registerResult === 'string' &&
-      registerResult.startsWith('error')
-    ) {
-      setError({
-        errorType: 'email',
-        error: registerResult.substr(registerResult.indexOf(':') + 1),
+      const loginResult = await callApi({
+        method: 'POST',
+        path: 'auth/login',
+        payload,
       })
-      return
-    }
-    saveAuthData(registerResult.token, registerResult.refreshToken)
-  }, [checkInputData, email, password, saveAuthData])
 
-  const auth = useCallback(async (): Promise<void> => {
+      if (typeof loginResult === 'string' && loginResult.startsWith('error')) {
+        if (loginResult === 'error:User not found') {
+          setError('email', 'User not found')
+        } else {
+          setError('password', 'Wrong password')
+        }
+        return
+      }
+      saveAuthData(loginResult.token, loginResult.refreshToken)
+    },
+    [saveAuthData]
+  )
+
+  const registerUser = useCallback(
+    async (payload: { email: string; password: string }) => {
+      const registerResult = await callApi({
+        method: 'POST',
+        path: 'auth/registration',
+        payload,
+      })
+
+      if (
+        typeof registerResult === 'string' &&
+        registerResult.startsWith('error')
+      ) {
+        return {
+          email: registerResult.substr(registerResult.indexOf(':') + 1),
+        }
+      }
+      saveAuthData(registerResult.token, registerResult.refreshToken)
+    },
+    [saveAuthData]
+  )
+
+  const auth = async (values: any) => {
     if (page === 'login') {
-      await loginUser()
+      await loginUser({
+        email: values.email,
+        password: values.password,
+      })
     } else {
-      await registerUser()
+      await registerUser({
+        email: values.email,
+        password: values.password,
+      })
     }
-  }, [loginUser, page, registerUser])
+  }
+
+  const validate = (name: string, schema: any, context = {}) => (
+    value: any,
+    allValues: any,
+    meta: FieldMetaState<any> | undefined
+  ) => {
+    return reach(schema, name)
+      .validate(value, {
+        context: {
+          allValues,
+          meta,
+          ...context,
+        },
+      })
+      .then(() => {})
+      .catch((err: any) => {
+        return err.errors && err.errors[0]
+      })
+  }
 
   return (
     <StyledLoginPage>
       <StyledLoginPageTopic>{page}</StyledLoginPageTopic>
-      <StyledLoginUserData>
-        <StyledLoginUserInput
-          type="email"
-          value={email}
-          onChange={setUserEmail}
-          placeholder="Email"
-        />
-        {error.errorType === 'email' ? (
-          <StyledUserDataError>{error.error}</StyledUserDataError>
-        ) : null}
-        <StyledLoginUserInput
-          type="password"
-          value={password}
-          onChange={setUserPassword}
-          placeholder="Password"
-        />
-        {error.errorType === 'password' ? (
-          <StyledUserDataError>{error.error}</StyledUserDataError>
-        ) : null}
-        {page === 'registration' ? (
-          <StyledLoginUserInput
-            type="password"
-            value={confirmPassword}
-            onChange={setUserConfirmPassword}
-            placeholder="Confirm password"
-          />
-        ) : null}
-      </StyledLoginUserData>
-      <StyledLoginButton type="submit" onClick={auth}>
-        {page}
-      </StyledLoginButton>
+      <Form
+        onSubmit={auth}
+        render={({ handleSubmit, submitError }) => (
+          <StyledLoginForm onSubmit={handleSubmit}>
+            {page === 'registration' ? (
+              <>
+                <Field
+                  name="firstName"
+                  type="text"
+                  validate={validate('name', validationSchema)}
+                >
+                  {({ input, meta }) => (
+                    <>
+                      <StyledLoginUserInput
+                        name={input.name}
+                        type={input.type}
+                        value={input.value}
+                        onChange={input.onChange}
+                        placeholder="First name"
+                      />
+                      {meta.touched && (meta.error || meta.submitError) && (
+                        <StyledUserDataError>
+                          {meta.error || meta.submitError}
+                        </StyledUserDataError>
+                      )}
+                    </>
+                  )}
+                </Field>
+                <Field
+                  name="lastName"
+                  type="text"
+                  validate={validate('name', validationSchema)}
+                >
+                  {({ input, meta }) => (
+                    <>
+                      <StyledLoginUserInput
+                        name={input.name}
+                        type={input.type}
+                        value={input.value}
+                        onChange={input.onChange}
+                        placeholder="Last name"
+                      />
+                      {meta.touched && (meta.error || meta.submitError) && (
+                        <StyledUserDataError>
+                          {meta.error || meta.submitError}
+                        </StyledUserDataError>
+                      )}
+                    </>
+                  )}
+                </Field>
+              </>
+            ) : null}
+            <Field
+              name="email"
+              type="email"
+              validate={validate('email', validationSchema)}
+            >
+              {({ input, meta }) => (
+                <>
+                  <StyledLoginUserInput
+                    name={input.name}
+                    type={input.type}
+                    value={input.value}
+                    onChange={input.onChange}
+                    placeholder="Email"
+                  />
+                  {console.log(meta)}
+                  {meta.touched && (meta.error || meta.submitError) && (
+                    <StyledUserDataError>
+                      {meta.error || meta.submitError}
+                    </StyledUserDataError>
+                  )}
+                </>
+              )}
+            </Field>
+            <Field
+              name="password"
+              type="password"
+              validate={validate('password', validationSchema)}
+            >
+              {({ input, meta }) => (
+                <>
+                  <StyledLoginUserInput
+                    name={input.name}
+                    type={input.type}
+                    value={input.value}
+                    onChange={input.onChange}
+                    placeholder="Password"
+                  />
+                  {meta.touched && (meta.error || meta.submitError) && (
+                    <StyledUserDataError>
+                      {meta.error || meta.submitError}
+                    </StyledUserDataError>
+                  )}
+                </>
+              )}
+            </Field>
+            {page === 'registration' ? (
+              <>
+                <Field
+                  name="confirmPassword"
+                  type="password"
+                  validate={validate('confirmPassword', validationSchema)}
+                >
+                  {({ input, meta }) => (
+                    <>
+                      <StyledLoginUserInput
+                        name={input.name}
+                        type={input.type}
+                        value={input.value}
+                        onChange={input.onChange}
+                        placeholder="Confirm password"
+                      />
+                      {meta.touched && (meta.error || meta.submitError) && (
+                        <StyledUserDataError>
+                          {meta.error || meta.submitError}
+                        </StyledUserDataError>
+                      )}
+                    </>
+                  )}
+                </Field>
+                <StyledUserSex>
+                  Sex:
+                  <StyledUserSexOption>
+                    Male
+                    <Field
+                      name="sex"
+                      component="input"
+                      type="radio"
+                      value="male"
+                    />
+                  </StyledUserSexOption>
+                  <StyledUserSexOption>
+                    Female
+                    <Field
+                      name="sex"
+                      component="input"
+                      type="radio"
+                      value="female"
+                    />
+                  </StyledUserSexOption>
+                  <StyledUserSexOption>
+                    Others
+                    <Field
+                      name="sex"
+                      component="input"
+                      type="radio"
+                      value="others"
+                    />
+                  </StyledUserSexOption>
+                </StyledUserSex>
+                <StyledUserBirthday>
+                  Birthday:
+                  <Field
+                    name="date"
+                    type="date"
+                    validate={validate('birthday', validationSchema)}
+                  >
+                    {({ input, meta }) => (
+                      <>
+                        <input
+                          name={input.name}
+                          type={input.type}
+                          value={input.value}
+                          onChange={input.onChange}
+                        />
+                        {meta.touched && (meta.error || meta.submitError) && (
+                          <StyledUserDataError>
+                            {meta.error || meta.submitError}
+                          </StyledUserDataError>
+                        )}
+                      </>
+                    )}
+                  </Field>
+                </StyledUserBirthday>
+              </>
+            ) : null}
+            {console.log(submitError)}
+            {submitError && <div>{submitError}</div>}
+            <StyledLoginButton type="submit">{page}</StyledLoginButton>
+          </StyledLoginForm>
+        )}
+      />
     </StyledLoginPage>
   )
 }

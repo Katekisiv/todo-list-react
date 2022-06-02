@@ -3,9 +3,10 @@ import { Button, InputBase, InputBaseProps } from '@mui/material'
 
 import {
   DivProps,
+  FormProps,
   HeadingProps,
+  LabelProps,
   MuiButtonProps,
-  SectionProps,
 } from '../../constants/types'
 
 export const StyledLoginPage = styled((props: DivProps) => <div {...props} />)`
@@ -30,13 +31,13 @@ export const StyledLoginPageTopic = styled((props: HeadingProps) => (
   text-transform: capitalize;
 `
 
-export const StyledLoginUserData = styled((props: SectionProps) => (
-  <section {...props} />
+export const StyledLoginForm = styled((props: FormProps) => (
+  <form {...props} />
 ))`
   display: flex;
   flex-wrap: wrap;
-  margin-bottom: 50px;
 `
+
 export const StyledLoginUserInput = styled((props: InputBaseProps) => (
   <InputBase {...props} />
 ))`
@@ -61,6 +62,7 @@ export const StyledLoginButton = styled((props: MuiButtonProps) => (
   padding: 15px 30px;
   margin-right: auto;
   margin-left: auto;
+  margin-top: 40px;
   border-radius: 10px;
   font-family: inherit;
   color: ${(props) => props.theme.palette.common.white};
@@ -80,6 +82,33 @@ export const StyledLoginButton = styled((props: MuiButtonProps) => (
     box-shadow: 0 4px 8px 4px rgba(0, 0, 0, 0.2),
       0 6px 20px 0 rgba(0, 0, 0, 0.19);
   }
+`
+
+export const StyledUserSex = styled((props: DivProps) => <div {...props} />)`
+  display: flex;
+  flex: 100%;
+  justify-content: space-between;
+  margin-top: 40px;
+`
+
+export const StyledUserSexOption = styled((props: LabelProps) => (
+  <label {...props} />
+))`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+`
+
+export const StyledUserBirthday = styled((props: LabelProps) => (
+  <label {...props} />
+))`
+  display: flex;
+  flex: 100%;
+  margin-top: 40px;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 15px;
 `
 
 export const StyledUserDataError = styled((props: DivProps) => (
