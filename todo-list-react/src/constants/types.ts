@@ -65,6 +65,15 @@ export type SectionProps = React.DetailedHTMLProps<
   }
 }
 
+export type FormProps = React.DetailedHTMLProps<
+  React.FormHTMLAttributes<HTMLFormElement>,
+  HTMLFormElement
+> & {
+  theme?: {
+    palette?: ThemePalette | undefined
+  }
+}
+
 export type NavProps = React.DetailedHTMLProps<
   React.HTMLAttributes<HTMLElement>,
   HTMLElement
@@ -86,6 +95,15 @@ export type HeaderProps = React.DetailedHTMLProps<
 export type SpanProps = React.DetailedHTMLProps<
   React.HTMLAttributes<HTMLSpanElement>,
   HTMLSpanElement
+> & {
+  theme?: {
+    palette?: ThemePalette | undefined
+  }
+}
+
+export type LabelProps = React.DetailedHTMLProps<
+  React.LabelHTMLAttributes<HTMLLabelElement>,
+  HTMLLabelElement
 > & {
   theme?: {
     palette?: ThemePalette | undefined
