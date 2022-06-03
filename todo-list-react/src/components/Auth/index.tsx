@@ -1,12 +1,14 @@
 import React, { useCallback } from 'react'
-//import {useState} from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLocation } from 'react-router-dom'
 import { Form, Field, FieldMetaState } from 'react-final-form'
 import { callApi } from '../../Api/callApi'
 import { useStore } from '../../hooks/userReducer'
 import { actionTypes } from '../../constants/actionTypes'
-import { validationSchema } from '../../constants/validationSchema'
+import {
+  loginValidationSchema,
+  registrationValidationSchema,
+} from '../../constants/validationSchema'
 import {
   StyledLoginButton,
   StyledLoginPage,
@@ -19,9 +21,6 @@ import {
   StyledUserBirthday,
 } from './Auth.style'
 import { reach } from 'yup'
-import { setIn } from 'final-form'
-
-// type ChangeEvent = React.ChangeEvent<HTMLInputElement>
 
 interface LocationState {
   state: {
@@ -57,24 +56,21 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
 
   const loginUser = useCallback(
     async (payload: { email: string; password: string }) => {
-      let errors = {}
-      const setError = (key: string, value: any) => {
-        errors = setIn(errors, key, value)
-      }
-
       const loginResult = await callApi({
         method: 'POST',
         path: 'auth/login',
         payload,
       })
-
       if (typeof loginResult === 'string' && loginResult.startsWith('error')) {
         if (loginResult === 'error:User not found') {
-          setError('email', 'User not found')
+          return {
+            email: 'User not found',
+          }
         } else {
-          setError('password', 'Wrong password')
+          return {
+            password: 'Wrong password',
+          }
         }
-        return
       }
       saveAuthData(loginResult.token, loginResult.refreshToken)
     },
@@ -104,12 +100,12 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
 
   const auth = async (values: any) => {
     if (page === 'login') {
-      await loginUser({
+      return await loginUser({
         email: values.email,
         password: values.password,
       })
     } else {
-      await registerUser({
+      return await registerUser({
         email: values.email,
         password: values.password,
       })
@@ -135,11 +131,33 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
       })
   }
 
+  const validateAll = useCallback(
+    async (values: any) => {
+      if (page === 'login') {
+        return loginValidationSchema
+          .validate(values)
+          .then(() => {})
+          .catch((err) => {
+            return { [err.path]: err.errors[0] }
+          })
+      } else if (page === 'registration') {
+        return registrationValidationSchema
+          .validate(values)
+          .then(() => {})
+          .catch((err) => {
+            return { [err.path]: err.errors[0] }
+          })
+      }
+    },
+    [page]
+  )
+
   return (
     <StyledLoginPage>
       <StyledLoginPageTopic>{page}</StyledLoginPageTopic>
       <Form
         onSubmit={auth}
+        validate={validateAll}
         render={({ handleSubmit, submitError }) => (
           <StyledLoginForm onSubmit={handleSubmit}>
             {page === 'registration' ? (
@@ -147,7 +165,7 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
                 <Field
                   name="firstName"
                   type="text"
-                  validate={validate('name', validationSchema)}
+                  validate={validate('firstName', registrationValidationSchema)}
                 >
                   {({ input, meta }) => (
                     <>
@@ -169,7 +187,7 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
                 <Field
                   name="lastName"
                   type="text"
-                  validate={validate('name', validationSchema)}
+                  validate={validate('lastName', registrationValidationSchema)}
                 >
                   {({ input, meta }) => (
                     <>
@@ -193,7 +211,7 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
             <Field
               name="email"
               type="email"
-              validate={validate('email', validationSchema)}
+              validate={validate('email', registrationValidationSchema)}
             >
               {({ input, meta }) => (
                 <>
@@ -204,7 +222,6 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
                     onChange={input.onChange}
                     placeholder="Email"
                   />
-                  {console.log(meta)}
                   {meta.touched && (meta.error || meta.submitError) && (
                     <StyledUserDataError>
                       {meta.error || meta.submitError}
@@ -216,7 +233,7 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
             <Field
               name="password"
               type="password"
-              validate={validate('password', validationSchema)}
+              validate={validate('password', registrationValidationSchema)}
             >
               {({ input, meta }) => (
                 <>
@@ -240,7 +257,10 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
                 <Field
                   name="confirmPassword"
                   type="password"
-                  validate={validate('confirmPassword', validationSchema)}
+                  validate={validate(
+                    'confirmPassword',
+                    registrationValidationSchema
+                  )}
                 >
                   {({ input, meta }) => (
                     <>
@@ -294,7 +314,10 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
                   <Field
                     name="date"
                     type="date"
-                    validate={validate('birthday', validationSchema)}
+                    validate={validate(
+                      'birthday',
+                      registrationValidationSchema
+                    )}
                   >
                     {({ input, meta }) => (
                       <>
@@ -315,7 +338,6 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
                 </StyledUserBirthday>
               </>
             ) : null}
-            {console.log(submitError)}
             {submitError && <div>{submitError}</div>}
             <StyledLoginButton type="submit">{page}</StyledLoginButton>
           </StyledLoginForm>
