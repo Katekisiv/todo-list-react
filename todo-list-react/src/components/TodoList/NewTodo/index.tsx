@@ -7,21 +7,16 @@ import {
   StyledNewTodoLabel,
 } from './NewTodo.style'
 import { InputBase } from '@mui/material'
-
-interface Todo {
-  value: string
-  completed: boolean
-}
-
-interface Props {
-  addTodoProps: (newTodo: Todo) => Promise<void>
-}
+import { useDispatch } from 'react-redux'
+import { loadingAction } from '../../../store/actions/globalActions'
+import { fetchCreateTodoAction } from '../../../store/actions/todoActions'
 
 type ChangeEvent = React.ChangeEvent<HTMLInputElement>
 
 type KeyEvent = React.KeyboardEvent<HTMLInputElement>
 
-const NewTodo: React.FC<Props> = ({ addTodoProps }): JSX.Element => {
+const NewTodo: React.FC = (): JSX.Element => {
+  const dispatch = useDispatch()
   const [value, setValue] = useState<string>('')
   const [completed, setCompleted] = useState<boolean>(false)
 
@@ -33,10 +28,12 @@ const NewTodo: React.FC<Props> = ({ addTodoProps }): JSX.Element => {
       value,
       completed,
     }
-    await addTodoProps(newTodo)
+    dispatch(loadingAction({ isLoading: true }))
+    dispatch(fetchCreateTodoAction(newTodo))
+    dispatch(loadingAction({ isLoading: false }))
     setValue('')
     setCompleted(false)
-  }, [addTodoProps, completed, value])
+  }, [completed, dispatch, value])
 
   const setTodoValue = useCallback((event: ChangeEvent): void => {
     setValue(event.target.value)

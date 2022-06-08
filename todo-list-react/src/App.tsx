@@ -8,7 +8,10 @@ import { AuthContext, userReducer } from './hooks/userReducer'
 
 const App: React.FC = () => {
   const token = localStorage.getItem('token')
-  const [state, dispatch] = useReducer(userReducer, { auth: token, todos: [] })
+  const [state, dispatch] = useReducer(userReducer, {
+    auth: token,
+    todos: [],
+  })
   return (
     <AuthContext.Provider
       value={{
