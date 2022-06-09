@@ -1,8 +1,5 @@
 import React, { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { callApi } from '../../Api/callApi'
-import { useStore } from '../../hooks/userReducer'
-import { actionTypes } from '../../constants/actionTypes'
 import {
   StyledContainer,
   StyledHeader,
@@ -10,27 +7,21 @@ import {
   StyledNavigation,
   StyledNavigationButton,
 } from './Header.style'
+import { useDispatch } from 'react-redux'
+import { logoutRequestAction } from '../../store/actions/userActions'
 
 const Header: React.FC<{
   titleNavBar: string
   removeRefreshToken?: () => void
 }> = ({ titleNavBar, removeRefreshToken }): JSX.Element => {
-  const { dispatch } = useStore()
-
+  const dispatch = useDispatch()
   const navigate = useNavigate()
 
   const logoutUser = useCallback(async () => {
-    await callApi({
-      method: 'POST',
-      path: 'auth/logout',
-    })
-
+    dispatch(logoutRequestAction())
     localStorage.removeItem('token')
     localStorage.removeItem('refreshToken')
     navigate('/login', { replace: true })
-    if (dispatch) {
-      dispatch({ type: actionTypes.LOGOUT })
-    }
   }, [dispatch, navigate])
 
   const navigateToPage = useCallback(() => {

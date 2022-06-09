@@ -13,13 +13,13 @@ export const todosReducer = (
   action: TodoAction
 ): TodoState => {
   switch (action.type) {
-    case actionTypes.GET_TODO:
+    case actionTypes.GET_TODO_SUCCESS:
       return {
         error: null,
         todos: [...action.payload],
       }
 
-    case actionTypes.CREATE_TODO:
+    case actionTypes.CREATE_TODO_SUCCESS:
       const newTodos = deepCloning(state.todos)
       newTodos.push(action.payload)
       return {
@@ -27,7 +27,7 @@ export const todosReducer = (
         todos: newTodos,
       }
 
-    case actionTypes.UPDATE_TODO:
+    case actionTypes.UPDATE_TODO_SUCCESS:
       return {
         error: null,
         todos: state.todos.map((todo) => {
@@ -38,7 +38,7 @@ export const todosReducer = (
         }),
       }
 
-    case actionTypes.COMPLETE_TODO:
+    case actionTypes.COMPLETE_TODO_SUCCESS:
       return {
         error: null,
         todos: state.todos.map((todo) => {
@@ -49,13 +49,13 @@ export const todosReducer = (
         }),
       }
 
-    case actionTypes.DELETE_TODO:
+    case actionTypes.DELETE_TODO_SUCCESS:
       return {
         error: null,
         todos: state.todos.filter((todo) => todo.id !== action.payload.id),
       }
 
-    case actionTypes.DELETE_COMPLETED_TODOS:
+    case actionTypes.DELETE_COMPLETED_TODOS_SUCCESS:
       return {
         error: null,
         todos: state.todos.filter((todo) => !todo.completed),

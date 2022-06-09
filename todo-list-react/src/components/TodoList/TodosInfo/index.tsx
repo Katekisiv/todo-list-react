@@ -5,8 +5,7 @@ import {
   StyledTodosInfo,
   StyledTodosInfoStatus,
 } from './TodosInfo.style'
-import { loadingAction } from '../../../store/actions/globalActions'
-import { fetchDeleteCompletedTodosAction } from '../../../store/actions/todoActions'
+import { deleteCompletedTodosRequestAction } from '../../../store/actions/todoActions'
 import { useDispatch } from 'react-redux'
 
 interface Props {
@@ -26,9 +25,7 @@ const TodosInfo = ({
 }: Props): JSX.Element => {
   const dispatch = useDispatch()
   const deleteCompletedTodos = useCallback(async (): Promise<void> => {
-    dispatch(loadingAction({ isLoading: true }))
-    await dispatch(fetchDeleteCompletedTodosAction())
-    dispatch(loadingAction({ isLoading: false }))
+    dispatch(deleteCompletedTodosRequestAction())
   }, [dispatch])
 
   return (

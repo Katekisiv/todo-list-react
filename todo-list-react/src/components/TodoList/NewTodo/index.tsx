@@ -8,8 +8,7 @@ import {
 } from './NewTodo.style'
 import { InputBase } from '@mui/material'
 import { useDispatch } from 'react-redux'
-import { loadingAction } from '../../../store/actions/globalActions'
-import { fetchCreateTodoAction } from '../../../store/actions/todoActions'
+import { createTodoRequestAction } from '../../../store/actions/todoActions'
 
 type ChangeEvent = React.ChangeEvent<HTMLInputElement>
 
@@ -28,9 +27,7 @@ const NewTodo: React.FC = (): JSX.Element => {
       value,
       completed,
     }
-    dispatch(loadingAction({ isLoading: true }))
-    dispatch(fetchCreateTodoAction(newTodo))
-    dispatch(loadingAction({ isLoading: false }))
+    dispatch(createTodoRequestAction(newTodo))
     setValue('')
     setCompleted(false)
   }, [completed, dispatch, value])
