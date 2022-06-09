@@ -6,35 +6,38 @@ import {
   StyledTodoItem,
 } from './Todo.style'
 import { ListItemButton, ListItemIcon } from '@mui/material'
-
-interface TodoItem {
-  id: number
-  userId: number
-  value: string
-  completed: boolean
-}
+import { useDispatch } from 'react-redux'
+import { loadingAction } from '../../../store/actions/globalActions'
+import {
+  fetchCompleteTodoAction,
+  fetchDeleteTodoAction,
+  fetchUpdateTodoAction,
+} from '../../../store/actions/todoActions'
+import { TodoItem } from '../../../constants/todoTypes'
 
 type ChangeEvent = React.ChangeEvent<HTMLInputElement>
-
 type KeyEvent = React.KeyboardEvent<HTMLInputElement>
 
 const Todo: React.FC<{
   todo: TodoItem
-  completeTodo: (id: number, completed: boolean) => Promise<void>
-  updateTodo: (id: number, value: string) => Promise<void>
-  deleteTodo: (id: number) => Promise<void>
-}> = ({ todo, completeTodo, updateTodo, deleteTodo }): JSX.Element => {
+}> = ({ todo }): JSX.Element => {
+  const { id, value, completed } = todo
+  const dispatch = useDispatch()
   const [readOnly, setReadOnly] = useState<boolean>(true)
-  const [todoValue, setTodoValue] = useState<string>(todo.value)
+  const [todoValue, setTodoValue] = useState<string>(value)
   const [onEnter, setOnEnter] = useState<boolean>(false)
 
   const completeTodoValue = useCallback(async (): Promise<void> => {
-    await completeTodo(todo.id, !todo.completed)
-  }, [completeTodo, todo.completed, todo.id])
+    dispatch(loadingAction({ isLoading: true }))
+    await dispatch(fetchCompleteTodoAction({ id, completed: !completed }))
+    dispatch(loadingAction({ isLoading: false }))
+  }, [completed, dispatch, id])
 
   const deleteTodoItem = useCallback(async (): Promise<void> => {
-    await deleteTodo(todo.id)
-  }, [deleteTodo, todo.id])
+    dispatch(loadingAction({ isLoading: true }))
+    await dispatch(fetchDeleteTodoAction({ id }))
+    dispatch(loadingAction({ isLoading: false }))
+  }, [dispatch, id])
 
   const updateTodoValue = useCallback((event: ChangeEvent): void => {
     setTodoValue(event.target.value)
@@ -42,8 +45,11 @@ const Todo: React.FC<{
 
   const updateTodoItem = useCallback(async (): Promise<void> => {
     setReadOnly(true)
-    await updateTodo(todo.id, todoValue)
-  }, [todo.id, todoValue, updateTodo])
+    setReadOnly(true)
+    dispatch(loadingAction({ isLoading: true }))
+    await dispatch(fetchUpdateTodoAction({ id, value: todoValue }))
+    dispatch(loadingAction({ isLoading: false }))
+  }, [dispatch, id, todoValue])
 
   const makeEditable = useCallback((): void => {
     setReadOnly(false)
@@ -69,13 +75,10 @@ const Todo: React.FC<{
 
   return (
     <StyledTodoItem>
-      <StyledTodoComplete
-        completed={todo.completed}
-        onClick={completeTodoValue}
-      />
+      <StyledTodoComplete completed={completed} onClick={completeTodoValue} />
       <StyledTodoInput
         type="text"
-        completed={todo.completed}
+        completed={completed}
         readOnly={readOnly}
         value={todoValue}
         onChange={updateTodoValue}

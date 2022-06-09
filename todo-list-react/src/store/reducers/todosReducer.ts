@@ -1,4 +1,5 @@
-import { TodoAction, TodoState } from '../../constants/todoTypes'
+import { TodoState } from '../../constants/todoTypes'
+import { TodoAction } from '../../constants/actionTypes'
 import { actionTypes } from '../../constants/actionTypes'
 import { deepCloning } from '../../helpers/deepCloning'
 

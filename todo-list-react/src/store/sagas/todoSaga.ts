@@ -1,11 +1,24 @@
 import { takeEvery, put, call, StrictEffect } from 'redux-saga/effects'
 import { callApi } from '../../Api/callApi'
-import { createTodoAction, getTodosAction } from '../actions/todoActions'
+import {
+  completeTodoAction,
+  createTodoAction,
+  deleteCompletedTodosAction,
+  deleteTodoAction,
+  getTodosAction,
+  updateTodoAction,
+} from '../actions/todoActions'
+import {
+  FetchCompleteTodoAction,
+  FetchCreateTodoAction,
+  FetchDeleteTodoAction,
+  FetchUpdateTodoAction,
+  actionTypes,
+} from '../../constants/actionTypes'
 import { TodoItem } from '../../constants/todoTypes'
-import { actionTypes } from '../../constants/actionTypes'
 
 function* getTodoWorker() {
-  const todos: TodoItem[] | string = yield call(callApi,{
+  const todos: TodoItem[] | string = yield call(callApi, {
     method: 'GET',
     path: 'todo',
   })
@@ -16,35 +29,49 @@ function* getTodoWorker() {
   }
 }
 
-function* createTodoWorker(newTodo: TodoItem) {
-  const receivedNewTodo: TodoItem = await callApi({
+function* createTodoWorker({ payload }: FetchCreateTodoAction) {
+  const receivedNewTodo: TodoItem = yield call(callApi, {
     method: 'POST',
     path: 'todo',
-    payload: newTodo,
+    payload: payload,
   })
   yield put(createTodoAction(receivedNewTodo))
 }
 
-function* updateTodoWorker () {
-
+function* updateTodoWorker({ payload }: FetchUpdateTodoAction) {
+  const { id, value } = payload
+  yield call(callApi, {
+    method: 'PATCH',
+    path: `todo/${id}`,
+    payload: { value },
+  })
+  yield put(updateTodoAction({ id, value }))
 }
 
-function* completeTodoWorker
-
-= () => {
-
+function* completeTodoWorker({ payload }: FetchCompleteTodoAction) {
+  const { id, completed } = payload
+  yield call(callApi, {
+    method: 'PATCH',
+    path: `todo/${id}`,
+    payload: { completed },
+  })
+  yield put(completeTodoAction({ id, completed }))
 }
 
-function* deleteTodoWorker
-
-= () => {
-
+function* deleteTodoWorker({ payload }: FetchDeleteTodoAction) {
+  yield call(callApi, {
+    method: 'DELETE',
+    path: `todo/${payload.id}`,
+  })
+  yield put(deleteTodoAction(payload))
 }
 
-function* deleteCompletedTodosWorker
-
-= () => {
-
+function* deleteCompletedTodosWorker() {
+  yield call(callApi, {
+    method: 'DELETE',
+    path: `todo?completed=true`,
+  })
+  yield put(deleteCompletedTodosAction())
 }
 
 export function* todoWatcher(): Generator<StrictEffect> {
@@ -53,5 +80,8 @@ export function* todoWatcher(): Generator<StrictEffect> {
   yield takeEvery(actionTypes.FETCH_UPDATE_TODO, updateTodoWorker)
   yield takeEvery(actionTypes.FETCH_COMPLETE_TODO, completeTodoWorker)
   yield takeEvery(actionTypes.FETCH_DELETE_TODO, deleteTodoWorker)
-  yield takeEvery(actionTypes.FETCH_DELETE_COMPLETED_TODOS, deleteCompletedTodosWorker)
+  yield takeEvery(
+    actionTypes.FETCH_DELETE_COMPLETED_TODOS,
+    deleteCompletedTodosWorker
+  )
 }
