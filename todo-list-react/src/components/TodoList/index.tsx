@@ -5,8 +5,7 @@ import NewTodo from './NewTodo'
 import { StyledTodoList, StyledTodos } from './TodoList.style'
 import { useDispatch } from 'react-redux'
 import { useTypedSelectors } from '../../hooks/useTypedSelectors'
-import { loadingAction } from '../../store/actions/globalActions'
-import { fetchGetTodosAction } from '../../store/actions/todoActions'
+import { getTodosRequestAction } from '../../store/actions/todoActions'
 
 interface TodoItem {
   id: number
@@ -21,9 +20,7 @@ const TodoList: React.FC = (): JSX.Element => {
   const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all')
 
   const getTodos = useCallback(async (): Promise<void> => {
-    dispatch(loadingAction({ isLoading: true }))
-    await dispatch(fetchGetTodosAction())
-    dispatch(loadingAction({ isLoading: false }))
+    dispatch(getTodosRequestAction())
   }, [dispatch])
 
   useEffect(() => {

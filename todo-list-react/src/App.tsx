@@ -1,36 +1,26 @@
 import './normalize.css'
-import React, { useReducer } from 'react'
+import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import TodoPage from './pages/TodoPage'
-import { AuthContext, userReducer } from './hooks/userReducer'
+import { useTypedSelectors } from './hooks/useTypedSelectors'
 
 const App: React.FC = () => {
-  const token = localStorage.getItem('token')
-  const [state, dispatch] = useReducer(userReducer, {
-    auth: token,
-    todos: [],
-  })
+  const { isAuth } = useTypedSelectors((state) => state.user)
+  console.log(isAuth)
   return (
-    <AuthContext.Provider
-      value={{
-        state,
-        dispatch,
-      }}
-    >
-      <Routes>
-        {state.auth ? (
-          <Route path="/" element={<TodoPage />} />
-        ) : (
-          <>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/registration" element={<RegisterPage />} />
-            <Route path="*" element={<LoginPage />} />
-          </>
-        )}
-      </Routes>
-    </AuthContext.Provider>
+    <Routes>
+      {isAuth ? (
+        <Route path="/" element={<TodoPage />} />
+      ) : (
+        <>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/registration" element={<RegisterPage />} />
+          <Route path="*" element={<LoginPage />} />
+        </>
+      )}
+    </Routes>
   )
 }
 

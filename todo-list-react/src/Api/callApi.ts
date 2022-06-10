@@ -1,4 +1,5 @@
 import { BASE_URL } from '../constants/api'
+import { getErrorMessage } from '../helpers/getErrorMessage'
 
 interface params {
   method: string
@@ -15,23 +16,27 @@ interface options {
 }
 
 export const callApi = async (params: params): Promise<any> => {
-  const options: options = {
-    method: `${params.method}`,
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-    },
-    ...params?.options,
-  }
+  try {
+    const options: options = {
+      method: `${params.method}`,
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+      ...params?.options,
+    }
 
-  if (params?.payload) {
-    options.body = JSON.stringify(params.payload)
-  }
+    if (params?.payload) {
+      options.body = JSON.stringify(params.payload)
+    }
 
-  const response = await fetch(`${BASE_URL}${params.path}`, options)
-  if (!response.ok) {
-    return `error:${JSON.parse(await response.text()).message}`
+    const response = await fetch(`${BASE_URL}${params.path}`, options)
+    if (!response.ok) {
+      throw new Error(JSON.parse(await response.text()).message)
+    }
+    return response.json()
+  } catch (error) {
+    return `${getErrorMessage(error)}`
   }
-  return response.json()
 }

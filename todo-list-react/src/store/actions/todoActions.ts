@@ -3,112 +3,108 @@ import {
   actionTypes,
   CompleteTodoAction,
   CreateTodoAction,
-  DeleteCompletedTodoAction,
+  DeleteCompletedTodosAction,
   DeleteTodoAction,
-  FetchCompleteTodoAction,
-  FetchCreateTodoAction,
-  FetchDeleteCompletedTodoAction,
-  FetchDeleteTodoAction,
-  FetchGetTodoAction,
-  FetchUpdateTodoAction,
   GetTodosAction,
   UpdateTodoAction,
 } from '../../constants/actionTypes'
 
-export const fetchGetTodosAction = (): FetchGetTodoAction => {
+export const getTodosRequestAction = (): GetTodosAction => {
   return {
-    type: actionTypes.FETCH_GET_TODO,
+    type: actionTypes.GET_TODO_REQUEST,
   }
 }
 
-export const getTodosAction = (todos: TodoItem[]): GetTodosAction => {
+export const getTodosSuccessAction = (todos: TodoItem[]): GetTodosAction => {
   return {
-    type: actionTypes.GET_TODO,
+    type: actionTypes.GET_TODO_SUCCESS,
     payload: todos,
   }
 }
 
-export const fetchCreateTodoAction = (todo: {
+export const createTodoRequestAction = (todo: {
   value: string
   completed: boolean
-}): FetchCreateTodoAction => {
+}): CreateTodoAction => {
   return {
-    type: actionTypes.FETCH_CREATE_TODO,
+    type: actionTypes.CREATE_TODO_REQUEST,
     payload: todo,
   }
 }
 
-export const createTodoAction = (todo: TodoItem): CreateTodoAction => {
+export const createTodoSuccessAction = (todo: TodoItem): CreateTodoAction => {
   return {
-    type: actionTypes.CREATE_TODO,
+    type: actionTypes.CREATE_TODO_SUCCESS,
     payload: todo,
   }
 }
 
-export const fetchUpdateTodoAction = (todo: {
-  id: number
-  value: string
-}): FetchUpdateTodoAction => {
-  return {
-    type: actionTypes.FETCH_UPDATE_TODO,
-    payload: todo,
-  }
-}
-
-export const updateTodoAction = (todo: {
+export const updateTodoRequestAction = (todo: {
   id: number
   value: string
 }): UpdateTodoAction => {
   return {
-    type: actionTypes.UPDATE_TODO,
+    type: actionTypes.UPDATE_TODO_REQUEST,
     payload: todo,
   }
 }
 
-export const fetchCompleteTodoAction = (todo: {
+export const updateTodoSuccessAction = (todo: {
   id: number
-  completed: boolean
-}): FetchCompleteTodoAction => {
+  value: string
+}): UpdateTodoAction => {
   return {
-    type: actionTypes.FETCH_COMPLETE_TODO,
+    type: actionTypes.UPDATE_TODO_SUCCESS,
     payload: todo,
   }
 }
 
-export const completeTodoAction = (todo: {
+export const completeTodoRequestAction = (todo: {
   id: number
   completed: boolean
 }): CompleteTodoAction => {
   return {
-    type: actionTypes.COMPLETE_TODO,
+    type: actionTypes.COMPLETE_TODO_REQUEST,
     payload: todo,
   }
 }
 
-export const fetchDeleteTodoAction = (payload: {
+export const completeTodoSuccessAction = (todo: {
   id: number
-}): FetchDeleteTodoAction => {
+  completed: boolean
+}): CompleteTodoAction => {
   return {
-    type: actionTypes.FETCH_DELETE_TODO,
+    type: actionTypes.COMPLETE_TODO_SUCCESS,
+    payload: todo,
+  }
+}
+
+export const deleteTodoRequestAction = (payload: {
+  id: number
+}): DeleteTodoAction => {
+  return {
+    type: actionTypes.DELETE_TODO_REQUEST,
     payload,
   }
 }
 
-export const deleteTodoAction = (payload: { id: number }): DeleteTodoAction => {
+export const deleteTodoSuccessAction = (payload: {
+  id: number
+}): DeleteTodoAction => {
   return {
-    type: actionTypes.DELETE_TODO,
+    type: actionTypes.DELETE_TODO_SUCCESS,
     payload,
   }
 }
 
-export const fetchDeleteCompletedTodosAction = (): FetchDeleteCompletedTodoAction => {
+export const deleteCompletedTodosRequestAction = (): DeleteCompletedTodosAction => {
   return {
-    type: actionTypes.FETCH_DELETE_COMPLETED_TODOS,
+    type: actionTypes.DELETE_COMPLETED_TODOS_REQUEST,
   }
 }
 
-export const deleteCompletedTodosAction = (): DeleteCompletedTodoAction => {
+export const deleteCompletedTodosSuccessAction = (): DeleteCompletedTodosAction => {
   return {
-    type: actionTypes.DELETE_COMPLETED_TODOS,
+    type: actionTypes.DELETE_COMPLETED_TODOS_SUCCESS,
   }
 }

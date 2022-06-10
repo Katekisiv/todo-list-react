@@ -2,9 +2,8 @@ import React, { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLocation } from 'react-router-dom'
 import { Form, Field, FieldMetaState } from 'react-final-form'
-import { callApi } from '../../Api/callApi'
-import { useStore } from '../../hooks/userReducer'
-import { actionTypes } from '../../constants/actionTypes'
+import { useDispatch } from 'react-redux'
+import { useTypedSelectors } from '../../hooks/useTypedSelectors'
 import {
   loginValidationSchema,
   registrationValidationSchema,
@@ -21,6 +20,10 @@ import {
   StyledUserBirthday,
 } from './Auth.style'
 import { reach } from 'yup'
+import {
+  loginRequestAction,
+  registerRequestAction,
+} from '../../store/actions/userActions'
 
 interface LocationState {
   state: {
@@ -33,82 +36,64 @@ interface LocationState {
 const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
   page,
 }): JSX.Element => {
-  const { dispatch } = useStore()
-
+  const dispatch = useDispatch()
+  const { token, refreshToken, error } = useTypedSelectors(
+    (state) => state.user
+  )
   const navigate = useNavigate()
   const location = useLocation() as LocationState
   const fromPage = location.state?.from.page || '/'
 
-  const saveAuthData = useCallback(
-    (token: string, refreshToken: string): void => {
+  const saveAuthData = useCallback((): void => {
+    if (typeof token === 'string') {
       localStorage.setItem('token', token)
+    }
+
+    if (typeof refreshToken === 'string') {
       localStorage.setItem('refreshToken', refreshToken)
-      navigate(fromPage, { replace: true })
-      if (dispatch) {
-        dispatch({
-          type: actionTypes.LOGIN,
-          payload: { token },
-        })
-      }
-    },
-    [dispatch, fromPage, navigate]
-  )
+    }
+    navigate(fromPage, { replace: true })
+  }, [fromPage, navigate, refreshToken, token])
 
   const loginUser = useCallback(
     async (payload: { email: string; password: string }) => {
-      const loginResult = await callApi({
-        method: 'POST',
-        path: 'auth/login',
-        payload,
-      })
-      if (typeof loginResult === 'string' && loginResult.startsWith('error')) {
-        if (loginResult === 'error:User not found') {
-          return {
-            email: 'User not found',
-          }
-        } else {
-          return {
-            password: 'Wrong password',
-          }
+      dispatch(loginRequestAction(payload))
+      if (error && error.errorType) {
+        return {
+          [error.errorType]: error.errorMessage,
         }
       }
-      saveAuthData(loginResult.token, loginResult.refreshToken)
+      saveAuthData()
     },
-    [saveAuthData]
+    [dispatch, error, saveAuthData]
   )
 
   const registerUser = useCallback(
     async (payload: { email: string; password: string }) => {
-      const registerResult = await callApi({
-        method: 'POST',
-        path: 'auth/registration',
-        payload,
-      })
-
-      if (
-        typeof registerResult === 'string' &&
-        registerResult.startsWith('error')
-      ) {
+      dispatch(registerRequestAction(payload))
+      if (error && error.errorType) {
         return {
-          email: registerResult.substr(registerResult.indexOf(':') + 1),
+          [error.errorType]: error.errorMessage,
         }
       }
-      saveAuthData(registerResult.token, registerResult.refreshToken)
+      saveAuthData()
     },
-    [saveAuthData]
+    [dispatch, error, saveAuthData]
   )
 
   const auth = async (values: any) => {
     if (page === 'login') {
-      return await loginUser({
+      await loginUser({
         email: values.email,
         password: values.password,
       })
+      return throwError()
     } else {
-      return await registerUser({
+      await registerUser({
         email: values.email,
         password: values.password,
       })
+      return throwError()
     }
   }
 
@@ -151,6 +136,15 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
     },
     [page]
   )
+
+  const throwError = useCallback(() => {
+    if (error.errorType) {
+      console.log(error)
+      return {
+        [error.errorType]: error.errorMessage,
+      }
+    }
+  }, [error])
 
   return (
     <StyledLoginPage>

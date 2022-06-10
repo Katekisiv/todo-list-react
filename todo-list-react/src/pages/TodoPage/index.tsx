@@ -4,10 +4,15 @@ import { useLocation, Navigate } from 'react-router-dom'
 import Header from '../../components/Header'
 import styles from './TodoPage.module.css'
 import TodoList from '../../components/TodoList'
-import { callApi } from '../../Api/callApi'
+import { useDispatch } from 'react-redux'
+import { useTypedSelectors } from '../../hooks/useTypedSelectors'
+import { refreshTokenRequestAction } from '../../store/actions/userActions'
 
 const TodoPage: React.FC = (): JSX.Element => {
-  const [error, setError] = useState<string>('')
+  const dispatch = useDispatch()
+  const { error, token, refreshToken } = useTypedSelectors(
+    (state) => state.user
+  )
   const location = useLocation()
   const [intervalId, setIntervalId] = useState<NodeJS.Timer | undefined>()
 
@@ -15,33 +20,30 @@ const TodoPage: React.FC = (): JSX.Element => {
     clearInterval(intervalId)
   }, [intervalId])
 
-  const refreshToken = useCallback(async (): Promise<boolean> => {
-    const refreshResult = await callApi({
-      method: 'POST',
-      path: 'refresh',
-      payload: { refreshToken: localStorage.getItem('refreshToken') },
-    })
-    if (
-      typeof refreshResult === 'string' &&
-      refreshResult.startsWith('error')
-    ) {
-      removeRefreshToken()
-      localStorage.removeItem('token')
-      localStorage.removeItem('refreshToken')
-      setError(refreshResult)
-      return false
+  const refresh = useCallback(async (): Promise<boolean> => {
+    if (refreshToken) {
+      dispatch(refreshTokenRequestAction({ refreshToken }))
+      if (error) {
+        removeRefreshToken()
+        localStorage.removeItem('token')
+        localStorage.removeItem('refreshToken')
+        return false
+      }
+      if (token) {
+        localStorage.setItem('token', token)
+        localStorage.setItem('refreshToken', refreshToken)
+        return true
+      }
     }
-    localStorage.setItem('token', refreshResult.accessToken)
-    localStorage.setItem('refreshToken', refreshResult.refreshToken)
-    return true
-  }, [removeRefreshToken])
+    return false
+  }, [dispatch, error, refreshToken, removeRefreshToken, token])
 
   const setRefreshToken = useCallback(async (): Promise<void> => {
     removeRefreshToken()
-    if (await refreshToken()) {
-      setIntervalId(setInterval(refreshToken, 1800000))
+    if (await refresh()) {
+      setIntervalId(setInterval(refresh, 1800000))
     }
-  }, [refreshToken, removeRefreshToken])
+  }, [refresh, removeRefreshToken])
 
   useEffect(() => {
     setRefreshToken()
