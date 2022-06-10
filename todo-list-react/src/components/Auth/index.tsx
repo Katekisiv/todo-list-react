@@ -41,67 +41,34 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
   const location = useLocation() as LocationState
   const fromPage = location.state?.from.page || '/'
 
-  const saveAuthData = useCallback(
-    ({
-      token,
-      refreshToken,
-    }: {
-      token: string
-      refreshToken: string
-    }): void => {
-      localStorage.setItem('token', token)
-      localStorage.setItem('refreshToken', refreshToken)
-      navigate(fromPage, { replace: true })
-    },
-    [fromPage, navigate]
-  )
-
-  const loginUser = useCallback(
-    async (payload: { email: string; password: string }) => {
-      try {
-        const response = await createAsyncAction(
-          dispatch,
-          loginRequestAction(payload)
-        )
-        saveAuthData(response)
-      } catch (error: any) {
-        return {
-          [error.errorType]: error.errorMessage,
-        }
-      }
-    },
-    [dispatch, saveAuthData]
-  )
-
-  const registerUser = useCallback(
-    async (payload: { email: string; password: string }) => {
-      try {
-        const response = await createAsyncAction(
-          dispatch,
-          registerRequestAction(payload)
-        )
-        saveAuthData(response)
-      } catch (error: any) {
-        return {
-          [error.errorType]: error.errorMessage,
-        }
-      }
-    },
-    [dispatch, saveAuthData]
-  )
-
   const auth = async (values: any) => {
     const { email, password } = values
-    if (page === 'login') {
-      return await loginUser({
-        email,
-        password,
-      })
-    } else {
-      return await registerUser({
-        email,
-        password,
-      })
+    try {
+      let response
+      if (page === 'login') {
+        response = await createAsyncAction(
+          dispatch,
+          loginRequestAction({
+            email,
+            password,
+          })
+        )
+      } else {
+        response = await createAsyncAction(
+          dispatch,
+          registerRequestAction({
+            email,
+            password,
+          })
+        )
+      }
+      localStorage.setItem('token', response.token)
+      localStorage.setItem('refreshToken', response.refreshToken)
+      navigate(fromPage, { replace: true })
+    } catch (error: any) {
+      return {
+        [error.errorType]: error.errorMessage,
+      }
     }
   }
 
