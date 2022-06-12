@@ -14,15 +14,23 @@ import {
   DeleteTodoAction,
   UpdateTodoAction,
   actionTypes,
+  GetTodosAction,
 } from '../../constants/actionTypes'
 import { TodoItem } from '../../constants/todoTypes'
 import { loadingAction } from '../actions/globalActions'
 
-function* getTodoWorker() {
+function* getTodoWorker({ payload }: GetTodosAction) {
+  const { filter } = payload
   yield put(loadingAction({ isLoading: true }))
+  let path = 'todo'
+  if (filter === 'active') {
+    path = 'todo?completed=false'
+  } else if (filter === 'completed') {
+    path = 'todo?completed=true'
+  }
   const todos: TodoItem[] | string = yield call(callApi, {
     method: 'GET',
-    path: 'todo',
+    path,
   })
   if (typeof todos === 'string') {
     yield put(getTodosSuccessAction([]))

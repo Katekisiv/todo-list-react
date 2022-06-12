@@ -12,7 +12,10 @@ const App: React.FC = () => {
   return (
     <Routes>
       {isAuth ? (
-        <Route path="/" element={<TodoPage />} />
+        <>
+          <Route path="/" element={<TodoPage />} />
+          <Route path="*" element={<TodoPage />} />
+        </>
       ) : (
         <>
           <Route path="/login" element={<LoginPage />} />
