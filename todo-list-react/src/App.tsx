@@ -8,7 +8,7 @@ import { useTypedSelectors } from './hooks/useTypedSelectors'
 
 const App: React.FC = () => {
   const { isAuth } = useTypedSelectors((state) => state.user)
-  console.log(isAuth)
+
   return (
     <Routes>
       {isAuth ? (

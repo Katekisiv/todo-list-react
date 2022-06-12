@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { useLocation } from 'react-router-dom'
 import { Form, Field, FieldMetaState } from 'react-final-form'
 import { useDispatch } from 'react-redux'
-import { useTypedSelectors } from '../../hooks/useTypedSelectors'
 import {
   loginValidationSchema,
   registrationValidationSchema,
@@ -24,6 +23,7 @@ import {
   loginRequestAction,
   registerRequestAction,
 } from '../../store/actions/userActions'
+import { createAsyncAction } from '../../helpers/dispatch'
 
 interface LocationState {
   state: {
@@ -37,63 +37,38 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
   page,
 }): JSX.Element => {
   const dispatch = useDispatch()
-  const { token, refreshToken, error } = useTypedSelectors(
-    (state) => state.user
-  )
   const navigate = useNavigate()
   const location = useLocation() as LocationState
   const fromPage = location.state?.from.page || '/'
 
-  const saveAuthData = useCallback((): void => {
-    if (typeof token === 'string') {
-      localStorage.setItem('token', token)
-    }
-
-    if (typeof refreshToken === 'string') {
-      localStorage.setItem('refreshToken', refreshToken)
-    }
-    navigate(fromPage, { replace: true })
-  }, [fromPage, navigate, refreshToken, token])
-
-  const loginUser = useCallback(
-    async (payload: { email: string; password: string }) => {
-      dispatch(loginRequestAction(payload))
-      if (error && error.errorType) {
-        return {
-          [error.errorType]: error.errorMessage,
-        }
-      }
-      saveAuthData()
-    },
-    [dispatch, error, saveAuthData]
-  )
-
-  const registerUser = useCallback(
-    async (payload: { email: string; password: string }) => {
-      dispatch(registerRequestAction(payload))
-      if (error && error.errorType) {
-        return {
-          [error.errorType]: error.errorMessage,
-        }
-      }
-      saveAuthData()
-    },
-    [dispatch, error, saveAuthData]
-  )
-
   const auth = async (values: any) => {
-    if (page === 'login') {
-      await loginUser({
-        email: values.email,
-        password: values.password,
-      })
-      return throwError()
-    } else {
-      await registerUser({
-        email: values.email,
-        password: values.password,
-      })
-      return throwError()
+    const { email, password } = values
+    try {
+      let response
+      if (page === 'login') {
+        response = await createAsyncAction(
+          dispatch,
+          loginRequestAction({
+            email,
+            password,
+          })
+        )
+      } else {
+        response = await createAsyncAction(
+          dispatch,
+          registerRequestAction({
+            email,
+            password,
+          })
+        )
+      }
+      localStorage.setItem('token', response.token)
+      localStorage.setItem('refreshToken', response.refreshToken)
+      navigate(fromPage, { replace: true })
+    } catch (error: any) {
+      return {
+        [error.errorType]: error.errorMessage,
+      }
     }
   }
 
@@ -136,15 +111,6 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
     },
     [page]
   )
-
-  const throwError = useCallback(() => {
-    if (error.errorType) {
-      console.log(error)
-      return {
-        [error.errorType]: error.errorMessage,
-      }
-    }
-  }, [error])
 
   return (
     <StyledLoginPage>

@@ -7,12 +7,11 @@ import TodoList from '../../components/TodoList'
 import { useDispatch } from 'react-redux'
 import { useTypedSelectors } from '../../hooks/useTypedSelectors'
 import { refreshTokenRequestAction } from '../../store/actions/userActions'
+import { createAsyncAction } from '../../helpers/dispatch'
 
 const TodoPage: React.FC = (): JSX.Element => {
   const dispatch = useDispatch()
-  const { error, token, refreshToken } = useTypedSelectors(
-    (state) => state.user
-  )
+  const { error, refreshToken } = useTypedSelectors((state) => state.user)
   const location = useLocation()
   const [intervalId, setIntervalId] = useState<NodeJS.Timer | undefined>()
 
@@ -22,21 +21,23 @@ const TodoPage: React.FC = (): JSX.Element => {
 
   const refresh = useCallback(async (): Promise<boolean> => {
     if (refreshToken) {
-      dispatch(refreshTokenRequestAction({ refreshToken }))
-      if (error) {
+      try {
+        const response = await createAsyncAction(
+          dispatch,
+          refreshTokenRequestAction({ refreshToken })
+        )
+        localStorage.setItem('token', response.token)
+        localStorage.setItem('refreshToken', response.refreshToken)
+        return true
+      } catch (error: any) {
         removeRefreshToken()
         localStorage.removeItem('token')
         localStorage.removeItem('refreshToken')
         return false
       }
-      if (token) {
-        localStorage.setItem('token', token)
-        localStorage.setItem('refreshToken', refreshToken)
-        return true
-      }
     }
     return false
-  }, [dispatch, error, refreshToken, removeRefreshToken, token])
+  }, [dispatch, refreshToken, removeRefreshToken])
 
   const setRefreshToken = useCallback(async (): Promise<void> => {
     removeRefreshToken()
@@ -49,7 +50,7 @@ const TodoPage: React.FC = (): JSX.Element => {
     setRefreshToken()
   }, [])
 
-  return error ? (
+  return error.errorMessage ? (
     <Navigate to="/login" state={{ from: location }} />
   ) : (
     <>
