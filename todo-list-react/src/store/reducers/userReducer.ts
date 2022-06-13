@@ -10,7 +10,7 @@ export interface UserState {
 const initialState: UserState = {
   isAuth: Boolean(localStorage.getItem('token')),
   token: localStorage.getItem('token'),
-  refreshToken: null,
+  refreshToken: localStorage.getItem('refreshToken'),
   error: {
     errorType: null,
     errorMessage: null,

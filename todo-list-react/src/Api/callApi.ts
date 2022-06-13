@@ -37,6 +37,6 @@ export const callApi = async (params: params): Promise<any> => {
     }
     return response.json()
   } catch (error) {
-    return `${getErrorMessage(error)}`
+    throw new Error(`${getErrorMessage(error)}`)
   }
 }

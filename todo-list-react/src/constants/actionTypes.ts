@@ -1,4 +1,4 @@
-import { TodoItem } from './todoTypes'
+import { Filter, TodoItem } from './todoTypes'
 
 export enum actionTypes {
   REGISTER_REQUEST = 'registerRequest',
@@ -93,6 +93,7 @@ export type GetTodosAction =
     }
   | {
       type: actionTypes.GET_TODO_REQUEST
+      payload: { filter: Filter }
     }
 
 export type CreateTodoAction =
@@ -150,26 +151,6 @@ export type TodoAction =
   | CompleteTodoAction
   | DeleteTodoAction
   | DeleteCompletedTodosAction
-
-export interface FetchCreateTodoAction {
-  type: actionTypes.CREATE_TODO_REQUEST
-  payload: { value: string; completed: boolean }
-}
-
-export interface FetchUpdateTodoAction {
-  type: actionTypes.UPDATE_TODO_REQUEST
-  payload: { id: number; value: string }
-}
-
-export interface FetchCompleteTodoAction {
-  type: actionTypes.COMPLETE_TODO_REQUEST
-  payload: { id: number; completed: boolean }
-}
-
-export interface FetchDeleteTodoAction {
-  type: actionTypes.DELETE_TODO_REQUEST
-  payload: { id: number }
-}
 
 export interface LoadingAction {
   type: actionTypes.LOADING

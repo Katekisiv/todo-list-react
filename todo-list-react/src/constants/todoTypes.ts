@@ -9,3 +9,5 @@ export interface TodoState {
   todos: TodoItem[]
   error: null | string
 }
+
+export type Filter = 'all' | 'active' | 'completed'

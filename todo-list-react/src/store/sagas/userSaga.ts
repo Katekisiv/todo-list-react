@@ -1,11 +1,6 @@
 import { takeEvery, put, call, StrictEffect } from 'redux-saga/effects'
 import { callApi } from '../../Api/callApi'
-import {
-  RegisterAction,
-  LoginAction,
-  RefreshTokenAction,
-  actionTypes,
-} from '../../constants/actionTypes'
+import { actionTypes } from '../../constants/actionTypes'
 import {
   registerSuccessAction,
   loginSuccessAction,
@@ -17,7 +12,8 @@ import {
 import { loadingAction } from '../actions/globalActions'
 import { getErrorMessage } from '../../helpers/getErrorMessage'
 
-function* registerWorker({ payload }: RegisterAction) {
+function* registerWorker(params: any) {
+  const { next, payload } = params
   try {
     yield put(loadingAction({ isLoading: true }))
     const registerResult: { token: string; refreshToken: string } = yield call(
@@ -28,12 +24,8 @@ function* registerWorker({ payload }: RegisterAction) {
         payload,
       }
     )
-    yield put(
-      registerSuccessAction({
-        token: registerResult.token,
-        refreshToken: registerResult.refreshToken,
-      })
-    )
+    yield put(registerSuccessAction(registerResult))
+    next(registerResult, null)
     yield put(loadingAction({ isLoading: false }))
   } catch (error) {
     yield put(
@@ -42,44 +34,57 @@ function* registerWorker({ payload }: RegisterAction) {
         errorMessage: getErrorMessage(error),
       })
     )
+    next(null, {
+      errorType: 'email',
+      errorMessage: getErrorMessage(error),
+    })
+
     yield put(loadingAction({ isLoading: false }))
   }
 }
 
-function* loginWorker({ payload }: LoginAction) {
-  yield put(loadingAction({ isLoading: true }))
-  const loginResult:
-    | { token: string; refreshToken: string }
-    | string = yield call(callApi, {
-    method: 'POST',
-    path: 'auth/login',
-    payload,
-  })
-  if (typeof loginResult !== 'string') {
-    yield put(
-      loginSuccessAction({
-        token: loginResult.token,
-        refreshToken: loginResult.refreshToken,
-      })
+function* loginWorker(params: any) {
+  const { next, payload } = params
+  try {
+    yield put(loadingAction({ isLoading: true }))
+    const loginResult: { token: string; refreshToken: string } = yield call(
+      callApi,
+      {
+        method: 'POST',
+        path: 'auth/login',
+        payload,
+      }
     )
-  } else {
-    if (loginResult === 'User not found') {
+    yield put(loginSuccessAction(loginResult))
+    next(loginResult, null)
+    yield put(loadingAction({ isLoading: false }))
+  } catch (error) {
+    const errorMessage = getErrorMessage(error)
+    if (errorMessage === 'User not found') {
       yield put(
         loginFailedAction({
           errorType: 'email',
-          errorMessage: loginResult,
+          errorMessage,
         })
       )
+      next(null, {
+        errorType: 'email',
+        errorMessage,
+      })
     } else {
       yield put(
         loginFailedAction({
           errorType: 'password',
-          errorMessage: loginResult,
+          errorMessage,
         })
       )
+      next(null, {
+        errorType: 'password',
+        errorMessage,
+      })
     }
+    yield put(loadingAction({ isLoading: false }))
   }
-  yield put(loadingAction({ isLoading: false }))
 }
 
 function* logoutWorker() {
@@ -92,7 +97,8 @@ function* logoutWorker() {
   yield put(loadingAction({ isLoading: false }))
 }
 
-function* refreshTokenWorker({ payload }: RefreshTokenAction) {
+function* refreshTokenWorker(params: any) {
+  const { next, payload } = params
   try {
     yield put(loadingAction({ isLoading: true }))
     const refreshResult: { token: string; refreshToken: string } = yield call(
@@ -104,6 +110,7 @@ function* refreshTokenWorker({ payload }: RefreshTokenAction) {
       }
     )
     yield put(refreshTokenSuccessAction(refreshResult))
+    next(refreshResult, null)
     yield put(loadingAction({ isLoading: false }))
   } catch (error) {
     yield put(logoutSuccessAction())

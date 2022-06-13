@@ -1,4 +1,4 @@
-import { TodoItem } from '../../constants/todoTypes'
+import { Filter, TodoItem } from '../../constants/todoTypes'
 import {
   actionTypes,
   CompleteTodoAction,
@@ -9,9 +9,12 @@ import {
   UpdateTodoAction,
 } from '../../constants/actionTypes'
 
-export const getTodosRequestAction = (): GetTodosAction => {
+export const getTodosRequestAction = (payload: {
+  filter: Filter
+}): GetTodosAction => {
   return {
     type: actionTypes.GET_TODO_REQUEST,
+    payload,
   }
 }
 

@@ -8,7 +8,7 @@ function parseDateString(_: any, originalValue: any) {
     : parse(originalValue, 'yyyy-MM-dd', new Date())
 }
 
-export const registrationValidationSchema = object({
+export const registrationValidationSchema = object().shape({
   firstName: string()
     .required('Name is required')
     .trim()
