@@ -22,17 +22,13 @@ const TodoPage: React.FC = (): JSX.Element => {
   const refresh = useCallback(async (): Promise<boolean> => {
     if (refreshToken) {
       try {
-        const response = await createAsyncAction(
+        await createAsyncAction(
           dispatch,
           refreshTokenRequestAction({ refreshToken })
         )
-        localStorage.setItem('token', response.token)
-        localStorage.setItem('refreshToken', response.refreshToken)
         return true
       } catch (error: any) {
         removeRefreshToken()
-        localStorage.removeItem('token')
-        localStorage.removeItem('refreshToken')
         return false
       }
     }

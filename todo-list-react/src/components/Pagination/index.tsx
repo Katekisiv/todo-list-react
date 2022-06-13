@@ -13,8 +13,15 @@ const Pagination = ({
   const pageButtons = []
   const { todos } = useTypedSelectors((state) => state.todos)
 
-  for (let i = 1; 1 <= Math.ceil(todos.length / itemsPerPage); i++) {
-    pageButtons.push(i)
+  for (let i = 1; i < 6; i++) {
+    if (currentPage === 1 && i <= Math.ceil(todos.length / itemsPerPage)) {
+      pageButtons.push(i)
+    } else if (
+      currentPage !== 1 &&
+      i <= Math.ceil(todos.length / itemsPerPage)
+    ) {
+      pageButtons.push(currentPage - 2 + i)
+    }
   }
 
   const paginateToPage = (event: any): void => {

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import Todo from './Todo'
 import TodosInfo from './TodosInfo'
 import NewTodo from './NewTodo'
@@ -15,9 +15,11 @@ const TodoList: React.FC = (): JSX.Element => {
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [todosPerPage] = useState<number>(4)
 
-  const lastTodoIndex = currentPage * todosPerPage
-  const firstTodoIndex = lastTodoIndex - todosPerPage
-  const currentTodos = todos.slice(firstTodoIndex, lastTodoIndex)
+  const currentTodos = useMemo(() => {
+    const lastTodoIndex = currentPage * todosPerPage
+    const firstTodoIndex = lastTodoIndex - todosPerPage
+    return todos.slice(firstTodoIndex, lastTodoIndex)
+  }, [todos, currentPage, todosPerPage])
 
   const paginate = useCallback((pageNumber: number) => {
     setCurrentPage(pageNumber)
@@ -49,9 +51,10 @@ const TodoList: React.FC = (): JSX.Element => {
         />
 
         <TodosInfo
-          filteredTodosLength={currentTodos.length}
+          filteredTodosLength={todos.length}
           activeFilter={filter}
           setFilter={setFilter}
+          paginate={paginate}
         />
       </StyledTodos>
     </>

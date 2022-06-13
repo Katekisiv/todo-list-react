@@ -19,8 +19,6 @@ const Header: React.FC<{
 
   const logoutUser = useCallback(async () => {
     dispatch(logoutRequestAction())
-    localStorage.removeItem('token')
-    localStorage.removeItem('refreshToken')
     navigate('/login', { replace: true })
   }, [dispatch, navigate])
 
