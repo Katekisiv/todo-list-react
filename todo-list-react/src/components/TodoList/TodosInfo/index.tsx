@@ -40,6 +40,7 @@ const TodosInfo = ({
             key={filter}
             filter={filter}
             setFilterProps={setFilter}
+            paginate={paginate}
             isSelected={filter === activeFilter}
           />
         ))}

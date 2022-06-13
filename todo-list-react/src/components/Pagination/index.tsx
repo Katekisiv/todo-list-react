@@ -1,26 +1,28 @@
 import { useTypedSelectors } from '../../hooks/useTypedSelectors'
 import { StyledPagination, StyledPaginationButton } from './Pagination.style'
+import { todosPerPage } from '../../constants/todoTypes'
 
 const Pagination = ({
-  itemsPerPage,
   paginate,
   currentPage,
 }: {
-  itemsPerPage: number
   paginate: Function
   currentPage: number
 }) => {
   const pageButtons = []
   const { todos } = useTypedSelectors((state) => state.todos)
+  const { todosLength } = todos
+  const totalPages = Math.ceil(todosLength / todosPerPage)
 
   for (let i = 1; i < 6; i++) {
-    if (currentPage === 1 && i <= Math.ceil(todos.length / itemsPerPage)) {
-      pageButtons.push(i)
-    } else if (
-      currentPage !== 1 &&
-      i <= Math.ceil(todos.length / itemsPerPage)
-    ) {
-      pageButtons.push(currentPage - 2 + i)
+    if (i <= totalPages) {
+      if (currentPage === 1 || currentPage === 2) {
+        pageButtons.push(i)
+      } else if (currentPage === totalPages || currentPage === totalPages - 1) {
+        pageButtons.push(totalPages + 1 - i)
+      } else {
+        pageButtons.push(currentPage - 3 + i)
+      }
     }
   }
 
@@ -29,15 +31,17 @@ const Pagination = ({
   }
   return (
     <StyledPagination>
-      {pageButtons.map((pageButton) => (
-        <StyledPaginationButton
-          key={pageButton}
-          onClick={paginateToPage}
-          selected={pageButton === currentPage}
-        >
-          {pageButton}
-        </StyledPaginationButton>
-      ))}
+      {pageButtons
+        .sort((a, b) => a - b)
+        .map((pageButton) => (
+          <StyledPaginationButton
+            key={pageButton}
+            onClick={paginateToPage}
+            selected={pageButton === currentPage}
+          >
+            {pageButton}
+          </StyledPaginationButton>
+        ))}
     </StyledPagination>
   )
 }

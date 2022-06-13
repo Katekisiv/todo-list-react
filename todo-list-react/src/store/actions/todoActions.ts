@@ -1,24 +1,27 @@
-import { Filter, TodoItem } from '../../constants/todoTypes'
+import { Filter, TodoItem, Todos } from '../../constants/todoTypes'
 import {
   actionTypes,
   CompleteTodoAction,
   CreateTodoAction,
   DeleteCompletedTodosAction,
   DeleteTodoAction,
-  GetTodosAction,
+  GetTodosRequestAction,
+  GetTodosSuccessAction,
   UpdateTodoAction,
 } from '../../constants/actionTypes'
 
 export const getTodosRequestAction = (payload: {
   filter: Filter
-}): GetTodosAction => {
+  todosPerPage?: number
+  pageNumber?: number
+}): GetTodosRequestAction => {
   return {
     type: actionTypes.GET_TODO_REQUEST,
     payload,
   }
 }
 
-export const getTodosSuccessAction = (todos: TodoItem[]): GetTodosAction => {
+export const getTodosSuccessAction = (todos: Todos): GetTodosSuccessAction => {
   return {
     type: actionTypes.GET_TODO_SUCCESS,
     payload: todos,
