@@ -7,29 +7,33 @@ import { useDispatch } from 'react-redux'
 import { useTypedSelectors } from '../../hooks/useTypedSelectors'
 import { getTodosRequestAction } from '../../store/actions/todoActions'
 import Pagination from '../Pagination'
+import { todosPerPage } from '../../constants/todoTypes'
 
 const TodoList: React.FC = (): JSX.Element => {
   const { todos } = useTypedSelectors((state) => state.todos)
-  const dispatch = useDispatch()
-  const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all')
+  const { todosLength, todoItems } = todos
   const [currentPage, setCurrentPage] = useState<number>(1)
-  const [todosPerPage] = useState<number>(4)
+  const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all')
 
-  const lastTodoIndex = currentPage * todosPerPage
-  const firstTodoIndex = lastTodoIndex - todosPerPage
-  const currentTodos = todos.slice(firstTodoIndex, lastTodoIndex)
+  const dispatch = useDispatch()
 
-  const paginate = useCallback((pageNumber: number) => {
-    setCurrentPage(pageNumber)
-  }, [])
-
-  const getTodos = useCallback(async (): Promise<void> => {
-    dispatch(getTodosRequestAction({ filter: 'all' }))
-  }, [dispatch])
+  const paginate = useCallback(
+    (pageNumber: number) => {
+      setCurrentPage(pageNumber)
+      dispatch(
+        getTodosRequestAction({
+          filter: filter,
+          todosPerPage,
+          pageNumber,
+        })
+      )
+    },
+    [dispatch, filter]
+  )
 
   useEffect(() => {
-    getTodos()
-  }, [getTodos])
+    paginate(currentPage)
+  }, [currentPage, paginate, todosLength])
 
   return (
     <>
@@ -37,21 +41,18 @@ const TodoList: React.FC = (): JSX.Element => {
 
       <StyledTodos>
         <StyledTodoList>
-          {currentTodos.map((todo) => (
+          {todoItems.map((todo) => (
             <Todo key={todo.id} todo={todo} />
           ))}
         </StyledTodoList>
 
-        <Pagination
-          itemsPerPage={todosPerPage}
-          paginate={paginate}
-          currentPage={currentPage}
-        />
+        <Pagination paginate={paginate} currentPage={currentPage} />
 
         <TodosInfo
-          filteredTodosLength={currentTodos.length}
+          filteredTodosLength={todosLength}
           activeFilter={filter}
           setFilter={setFilter}
+          paginate={paginate}
         />
       </StyledTodos>
     </>

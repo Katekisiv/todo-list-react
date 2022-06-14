@@ -14,26 +14,31 @@ import {
   DeleteTodoAction,
   UpdateTodoAction,
   actionTypes,
-  GetTodosAction,
+  GetTodosRequestAction,
 } from '../../constants/actionTypes'
-import { TodoItem } from '../../constants/todoTypes'
+import { TodoItem, Todos } from '../../constants/todoTypes'
 import { loadingAction } from '../actions/globalActions'
 
-function* getTodoWorker({ payload }: GetTodosAction) {
-  const { filter } = payload
+function* getTodoWorker({ payload }: GetTodosRequestAction) {
+  const { filter, todosPerPage, pageNumber } = payload
   yield put(loadingAction({ isLoading: true }))
-  let path = 'todo'
+  let path = 'todo?'
   if (filter === 'active') {
-    path = 'todo?completed=false'
+    path += 'completed=false&'
   } else if (filter === 'completed') {
-    path = 'todo?completed=true'
+    path += 'completed=true&'
   }
-  const todos: TodoItem[] | string = yield call(callApi, {
+
+  if (todosPerPage && pageNumber) {
+    path += `itemsPerPage=${todosPerPage}&pageNumber=${pageNumber}`
+  }
+
+  const todos: Todos | string = yield call(callApi, {
     method: 'GET',
     path,
   })
   if (typeof todos === 'string') {
-    yield put(getTodosSuccessAction([]))
+    yield put(getTodosSuccessAction({ todosLength: 0, todoItems: [] }))
   } else {
     yield put(getTodosSuccessAction(todos))
   }
@@ -59,7 +64,12 @@ function* updateTodoWorker({ payload }: UpdateTodoAction) {
     path: `todo/${id}`,
     payload: { value },
   })
-  yield put(updateTodoSuccessAction({ id, value }))
+  yield put(
+    updateTodoSuccessAction({
+      id,
+      value,
+    })
+  )
   yield put(loadingAction({ isLoading: false }))
 }
 
@@ -71,7 +81,12 @@ function* completeTodoWorker({ payload }: CompleteTodoAction) {
     path: `todo/${id}`,
     payload: { completed },
   })
-  yield put(completeTodoSuccessAction({ id, completed }))
+  yield put(
+    completeTodoSuccessAction({
+      id,
+      completed,
+    })
+  )
   yield put(loadingAction({ isLoading: false }))
 }
 

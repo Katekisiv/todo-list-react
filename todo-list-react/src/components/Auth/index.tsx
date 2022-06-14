@@ -44,9 +44,8 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
   const auth = async (values: any) => {
     const { email, password } = values
     try {
-      let response
       if (page === 'login') {
-        response = await createAsyncAction(
+        await createAsyncAction(
           dispatch,
           loginRequestAction({
             email,
@@ -54,7 +53,7 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
           })
         )
       } else {
-        response = await createAsyncAction(
+        await createAsyncAction(
           dispatch,
           registerRequestAction({
             email,
@@ -62,8 +61,6 @@ const Auth: React.FC<{ page: 'login' | 'registration' }> = ({
           })
         )
       }
-      localStorage.setItem('token', response.token)
-      localStorage.setItem('refreshToken', response.refreshToken)
       navigate(fromPage, { replace: true })
     } catch (error: any) {
       return {

@@ -12,6 +12,7 @@ interface Props {
   filteredTodosLength: number
   activeFilter: 'all' | 'active' | 'completed'
   setFilter: Dispatch<SetStateAction<'all' | 'active' | 'completed'>>
+  paginate: Function
 }
 
 type Filter = 'all' | 'active' | 'completed'
@@ -22,11 +23,13 @@ const TodosInfo = ({
   filteredTodosLength,
   activeFilter,
   setFilter,
+  paginate,
 }: Props): JSX.Element => {
   const dispatch = useDispatch()
   const deleteCompletedTodos = useCallback(async (): Promise<void> => {
     dispatch(deleteCompletedTodosRequestAction())
-  }, [dispatch])
+    paginate(1)
+  }, [dispatch, paginate])
 
   return (
     <StyledTodosInfo>
@@ -37,6 +40,7 @@ const TodosInfo = ({
             key={filter}
             filter={filter}
             setFilterProps={setFilter}
+            paginate={paginate}
             isSelected={filter === activeFilter}
           />
         ))}

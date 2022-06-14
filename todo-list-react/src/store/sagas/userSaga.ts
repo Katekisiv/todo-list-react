@@ -24,8 +24,9 @@ function* registerWorker(params: any) {
         payload,
       }
     )
+    localStorage.setItem('token', registerResult.token)
+    localStorage.setItem('refreshToken', registerResult.refreshToken)
     yield put(registerSuccessAction(registerResult))
-    next(registerResult, null)
     yield put(loadingAction({ isLoading: false }))
   } catch (error) {
     yield put(
@@ -55,8 +56,9 @@ function* loginWorker(params: any) {
         payload,
       }
     )
+    localStorage.setItem('token', loginResult.token)
+    localStorage.setItem('refreshToken', loginResult.refreshToken)
     yield put(loginSuccessAction(loginResult))
-    next(loginResult, null)
     yield put(loadingAction({ isLoading: false }))
   } catch (error) {
     const errorMessage = getErrorMessage(error)
@@ -93,12 +95,14 @@ function* logoutWorker() {
     method: 'POST',
     path: 'auth/logout',
   })
+  localStorage.removeItem('token')
+  localStorage.removeItem('refreshToken')
   yield put(logoutSuccessAction())
   yield put(loadingAction({ isLoading: false }))
 }
 
 function* refreshTokenWorker(params: any) {
-  const { next, payload } = params
+  const { payload } = params
   try {
     yield put(loadingAction({ isLoading: true }))
     const refreshResult: { token: string; refreshToken: string } = yield call(
@@ -109,10 +113,13 @@ function* refreshTokenWorker(params: any) {
         payload,
       }
     )
+    localStorage.setItem('token', refreshResult.token)
+    localStorage.setItem('refreshToken', refreshResult.refreshToken)
     yield put(refreshTokenSuccessAction(refreshResult))
-    next(refreshResult, null)
     yield put(loadingAction({ isLoading: false }))
   } catch (error) {
+    localStorage.removeItem('token')
+    localStorage.removeItem('refreshToken')
     yield put(logoutSuccessAction())
     yield put(loadingAction({ isLoading: false }))
   }

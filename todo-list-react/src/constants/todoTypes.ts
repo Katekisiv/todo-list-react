@@ -5,9 +5,13 @@ export interface TodoItem {
   completed: boolean
 }
 
+export type Todos = { todosLength: number; todoItems: TodoItem[] }
+
 export interface TodoState {
-  todos: TodoItem[]
+  todos: Todos
   error: null | string
 }
 
 export type Filter = 'all' | 'active' | 'completed'
+
+export const todosPerPage = 4

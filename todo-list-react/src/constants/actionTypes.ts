@@ -1,4 +1,4 @@
-import { Filter, TodoItem } from './todoTypes'
+import { Filter, TodoItem, Todos } from './todoTypes'
 
 export enum actionTypes {
   REGISTER_REQUEST = 'registerRequest',
@@ -86,15 +86,15 @@ export type UserAction =
   | LogoutAction
   | RefreshTokenAction
 
-export type GetTodosAction =
-  | {
-      type: actionTypes.GET_TODO_SUCCESS
-      payload: TodoItem[]
-    }
-  | {
-      type: actionTypes.GET_TODO_REQUEST
-      payload: { filter: Filter }
-    }
+export type GetTodosSuccessAction = {
+  type: actionTypes.GET_TODO_SUCCESS
+  payload: Todos
+}
+
+export type GetTodosRequestAction = {
+  type: actionTypes.GET_TODO_REQUEST
+  payload: { filter: Filter; todosPerPage?: number; pageNumber?: number }
+}
 
 export type CreateTodoAction =
   | {
@@ -145,7 +145,7 @@ export type DeleteCompletedTodosAction =
     }
 
 export type TodoAction =
-  | GetTodosAction
+  | GetTodosSuccessAction
   | CreateTodoAction
   | UpdateTodoAction
   | CompleteTodoAction
