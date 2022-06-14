@@ -1,6 +1,6 @@
 import { styled } from '@mui/material/styles'
 import { List } from '@mui/material'
-import { MuiListProps, SectionProps } from '../../constants/types'
+import { DivProps, MuiListProps, SectionProps } from '../../constants/types'
 
 export const StyledTodos = styled((props: SectionProps) => (
   <section {...props} />
@@ -18,4 +18,12 @@ export const StyledTodoList = styled((props: MuiListProps) => (
   flex-wrap: wrap;
   padding-top: 0;
   padding-bottom: 0;
+`
+
+export const StyledLoadingSpinner = styled((props: DivProps) => (
+  <div {...props} />
+))`
+  position: relative;
+  top: 20px;
+  left: 20px;
 `
