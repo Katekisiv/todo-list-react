@@ -1,7 +1,6 @@
 import { TodoState } from '../../constants/todoTypes'
 import { TodoAction } from '../../constants/actionTypes'
 import { actionTypes } from '../../constants/actionTypes'
-import { deepCloning } from '../../helpers/deepCloning'
 
 const initialState: TodoState = {
   todos: {
@@ -26,43 +25,39 @@ export const todosReducer = (
       }
 
     case actionTypes.CREATE_TODO_SUCCESS:
-      const oldTodos = deepCloning(state.todos.todoItems)
-      oldTodos.push(action.payload)
       return {
         error: null,
         todos: {
           todosLength: state.todos.todosLength + 1,
-          todoItems: oldTodos,
+          todoItems: [...state.todos.todoItems, action.payload],
         },
       }
 
     case actionTypes.UPDATE_TODO_SUCCESS:
-      const newUpdatedTodos = state.todos.todoItems.map((todo) => {
-        if (todo.id === action.payload.id) {
-          todo.value = action.payload.value
-        }
-        return { ...todo }
-      })
       return {
         error: null,
         todos: {
-          todosLength: newUpdatedTodos.length,
-          todoItems: newUpdatedTodos,
+          todosLength: state.todos.todosLength,
+          todoItems: state.todos.todoItems.map((todo) => {
+            if (todo.id === action.payload.id) {
+              todo.value = action.payload.value
+            }
+            return { ...todo }
+          }),
         },
       }
 
     case actionTypes.COMPLETE_TODO_SUCCESS:
-      const newTodos = state.todos.todoItems.map((todo) => {
-        if (todo.id === action.payload.id) {
-          todo.completed = action.payload.completed
-        }
-        return { ...todo }
-      })
       return {
         error: null,
         todos: {
-          todosLength: newTodos.length,
-          todoItems: newTodos,
+          todosLength: state.todos.todosLength,
+          todoItems: state.todos.todoItems.map((todo) => {
+            if (todo.id === action.payload.id) {
+              todo.completed = action.payload.completed
+            }
+            return { ...todo }
+          }),
         },
       }
 
