@@ -1,17 +1,29 @@
 import { useTypedSelectors } from '../../hooks/useTypedSelectors'
 import { StyledPagination, StyledPaginationButton } from './Pagination.style'
-import { todosPerPage } from '../../constants/todoTypes'
+import {Filter, todosPerPage} from '../../constants/todoTypes'
 import { useMemo } from 'react'
 
 const Pagination = ({
   paginate,
   currentPage,
+  filter
 }: {
   paginate: Function
   currentPage: number
+  filter: Filter
 }) => {
   const { todos } = useTypedSelectors((state) => state.todos)
-  const { todosLength } = todos
+  const todosLength = useMemo(() => {
+    switch (filter) {
+      case "all":
+        return todos.todosLength
+      case "completed":
+        return todos.completedTodosLength
+      case "active":
+        return todos.todosLength - todos.completedTodosLength
+    }
+  }, [todos, filter])
+
   const totalPages = Math.ceil(todosLength / todosPerPage)
 
   const pageButtons = useMemo(() => {

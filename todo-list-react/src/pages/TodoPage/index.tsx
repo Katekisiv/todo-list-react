@@ -1,17 +1,17 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, {useCallback, useEffect, useState} from 'react'
 import classNames from 'classnames'
-import { useLocation, Navigate } from 'react-router-dom'
+import {useLocation, Navigate} from 'react-router-dom'
 import Header from '../../components/Header'
 import styles from './TodoPage.module.css'
 import TodoList from '../../components/TodoList'
-import { useDispatch } from 'react-redux'
-import { useTypedSelectors } from '../../hooks/useTypedSelectors'
-import { refreshTokenRequestAction } from '../../store/actions/userActions'
-import { createAsyncAction } from '../../helpers/dispatch'
+import {useDispatch} from 'react-redux'
+import {useTypedSelectors} from '../../hooks/useTypedSelectors'
+import {refreshTokenRequestAction} from '../../store/actions/userActions'
+import {createAsyncAction} from '../../helpers/dispatch'
 
 const TodoPage: React.FC = (): JSX.Element => {
   const dispatch = useDispatch()
-  const { error, refreshToken } = useTypedSelectors((state) => state.user)
+  const {error, refreshToken} = useTypedSelectors((state) => state.user)
   const location = useLocation()
   const [intervalId, setIntervalId] = useState<NodeJS.Timer | undefined>()
 
@@ -20,25 +20,22 @@ const TodoPage: React.FC = (): JSX.Element => {
   }, [intervalId])
 
   const refresh = useCallback(async (): Promise<boolean> => {
-    if (refreshToken) {
-      try {
-        await createAsyncAction(
-          dispatch,
-          refreshTokenRequestAction({ refreshToken })
-        )
-        return true
-      } catch (error: any) {
-        removeRefreshToken()
-        return false
-      }
+    try {
+      await createAsyncAction(
+        dispatch,
+        refreshTokenRequestAction({refreshToken})
+      )
+      return true
+    } catch (error: any) {
+      removeRefreshToken()
+      return false
     }
-    return false
   }, [dispatch, refreshToken, removeRefreshToken])
 
   const setRefreshToken = useCallback(async (): Promise<void> => {
     removeRefreshToken()
     if (await refresh()) {
-      setIntervalId(setInterval(refresh, 1800000))
+      setIntervalId(setInterval(refresh, 5000))
     }
   }, [refresh, removeRefreshToken])
 
@@ -47,13 +44,13 @@ const TodoPage: React.FC = (): JSX.Element => {
   }, [])
 
   return error.errorMessage ? (
-    <Navigate to="/login" state={{ from: location }} />
+    <Navigate to="/login" state={{from: location}}/>
   ) : (
     <>
-      <Header titleNavBar="exit" removeRefreshToken={removeRefreshToken} />
+      <Header titleNavBar="exit" removeRefreshToken={removeRefreshToken}/>
       <main className={styles.main}>
         <div className={classNames(styles.mainContainer, styles.container)}>
-          <TodoList />
+          <TodoList/>
         </div>
       </main>
     </>

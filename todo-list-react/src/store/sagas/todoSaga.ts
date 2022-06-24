@@ -20,29 +20,29 @@ import { TodoItem, Todos } from '../../constants/todoTypes'
 import { loadingAction } from '../actions/globalActions'
 
 function* getTodoWorker({ payload }: GetTodosRequestAction) {
-  const { filter, todosPerPage, pageNumber } = payload
-  yield put(loadingAction({ isLoading: true }))
-  let path = 'todo?'
-  if (filter === 'active') {
-    path += 'completed=false&'
-  } else if (filter === 'completed') {
-    path += 'completed=true&'
-  }
+  try{
+    const { filter, todosPerPage, pageNumber } = payload
+    yield put(loadingAction({ isLoading: true }))
+    let path = 'todo?'
+    if (filter === 'active') {
+      path += 'completed=false&'
+    } else if (filter === 'completed') {
+      path += 'completed=true&'
+    }
 
-  if (todosPerPage && pageNumber) {
-    path += `itemsPerPage=${todosPerPage}&pageNumber=${pageNumber}`
-  }
+    if (todosPerPage && pageNumber) {
+      path += `itemsPerPage=${todosPerPage}&pageNumber=${pageNumber}`
+    }
 
-  const todos: Todos | string = yield call(callApi, {
-    method: 'GET',
-    path,
-  })
-  if (typeof todos === 'string') {
-    yield put(getTodosSuccessAction({ todosLength: 0, todoItems: [] }))
-  } else {
+    const todos: Todos = yield call(callApi, {
+      method: 'GET',
+      path,
+    })
     yield put(getTodosSuccessAction(todos))
+    yield put(loadingAction({ isLoading: false }))
+  } catch (error) {
+    yield put(getTodosSuccessAction({ todosLength: 0, completedTodosLength: 0, todoItems: [] }))
   }
-  yield put(loadingAction({ isLoading: false }))
 }
 
 function* createTodoWorker({ payload }: CreateTodoAction) {

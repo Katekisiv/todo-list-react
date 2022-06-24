@@ -79,7 +79,7 @@ export const logoutSuccessAction = (): LogoutAction => {
 }
 
 export const refreshTokenRequestAction = (payload: {
-  refreshToken: string
+  refreshToken: string | null
 }): RefreshTokenAction => {
   return {
     type: actionTypes.REFRESH_TOKEN_REQUEST,

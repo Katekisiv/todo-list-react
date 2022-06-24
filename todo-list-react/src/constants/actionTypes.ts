@@ -73,11 +73,11 @@ export type LogoutAction =
 export type RefreshTokenAction =
   | {
       type: actionTypes.REFRESH_TOKEN_SUCCESS
-      payload: { token: string; refreshToken: string }
+      payload: { token: string; refreshToken: string | null }
     }
   | {
       type: actionTypes.REFRESH_TOKEN_REQUEST
-      payload: { refreshToken: string }
+      payload: { refreshToken: string | null }
     }
 
 export type UserAction =

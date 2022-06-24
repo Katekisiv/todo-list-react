@@ -5,7 +5,7 @@ export interface TodoItem {
   completed: boolean
 }
 
-export type Todos = { todosLength: number; todoItems: TodoItem[] }
+export type Todos = { todosLength: number; completedTodosLength: number; todoItems: TodoItem[] }
 
 export interface TodoState {
   todos: Todos

@@ -5,6 +5,7 @@ import { actionTypes } from '../../constants/actionTypes'
 const initialState: TodoState = {
   todos: {
     todosLength: 0,
+    completedTodosLength: 0,
     todoItems: [],
   },
   error: null,
@@ -20,6 +21,7 @@ export const todosReducer = (
         error: null,
         todos: {
           todosLength: action.payload.todosLength,
+          completedTodosLength: action.payload.completedTodosLength,
           todoItems: [...action.payload.todoItems],
         },
       }
@@ -29,6 +31,7 @@ export const todosReducer = (
         error: null,
         todos: {
           todosLength: state.todos.todosLength + 1,
+          completedTodosLength: action.payload.completed ? state.todos.completedTodosLength + 1 : state.todos.completedTodosLength,
           todoItems: [...state.todos.todoItems, action.payload],
         },
       }
@@ -38,6 +41,7 @@ export const todosReducer = (
         error: null,
         todos: {
           todosLength: state.todos.todosLength,
+          completedTodosLength: state.todos.completedTodosLength,
           todoItems: state.todos.todoItems.map((todo) => {
             if (todo.id === action.payload.id) {
               todo.value = action.payload.value
@@ -52,6 +56,7 @@ export const todosReducer = (
         error: null,
         todos: {
           todosLength: state.todos.todosLength,
+          completedTodosLength: state.todos.completedTodosLength,
           todoItems: state.todos.todoItems.map((todo) => {
             if (todo.id === action.payload.id) {
               todo.completed = action.payload.completed
@@ -62,10 +67,15 @@ export const todosReducer = (
       }
 
     case actionTypes.DELETE_TODO_SUCCESS:
+      const isCompleted = state.todos.todoItems.find(
+          (todo) => todo.id === action.payload.id
+        )?.completed
+
       return {
         error: null,
         todos: {
           todosLength: state.todos.todosLength - 1,
+          completedTodosLength: isCompleted? state.todos.completedTodosLength - 1 : state.todos.completedTodosLength,
           todoItems: state.todos.todoItems.filter(
             (todo) => todo.id !== action.payload.id
           ),
@@ -80,6 +90,7 @@ export const todosReducer = (
         error: null,
         todos: {
           todosLength: activeTodos.length,
+          completedTodosLength: 0,
           todoItems: activeTodos,
         },
       }
